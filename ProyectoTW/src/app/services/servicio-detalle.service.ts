@@ -15,8 +15,9 @@ export class ServicioDetalleService {
 
   constructor(private http: HttpClient) {}
 getFacturaById(id: number) {
-  return this.http.get<any>(`http://localhost:3000/api/users/factura/${id}`);
+  return this.http.get<any>(`${this.apiUrl}/factura/${id}`);
 }
+
 
   getServicioDetalle(): Observable<any[]> {
     return this.http.get<any>(`${this.apiUrl}/servicio-detalles`).pipe(

@@ -33,13 +33,15 @@ export class AgendarCitaComponent implements OnInit {
 
   initForm() {
     this.citaForm = this.fb.group({
-      cliente_id: ['', Validators.required],
-      servicio_id: ['', Validators.required],
-      fecha: ['', Validators.required],
-      hora: ['', Validators.required],
-      estado: ['PENDIENTE'],
-      observaciones: ['']
-    });
+  usuario_id: ['', Validators.required],  // ya no cliente_id
+  servicio_id: ['', Validators.required],
+  fecha: ['', Validators.required],
+  hora: ['', Validators.required],
+  estado: ['PENDIENTE'],
+  observaciones: ['']
+});
+
+
   }
 
   cargarClientes() {

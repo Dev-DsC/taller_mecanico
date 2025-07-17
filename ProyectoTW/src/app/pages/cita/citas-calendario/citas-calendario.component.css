@@ -1,0 +1,61 @@
+
+::ng-deep .fc {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 12px;
+    padding: auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.4);
+    transition: all 0.3s ease;
+    max-width: 900px;
+    margin: 0 auto; 
+}
+
+::ng-deep .fc-toolbar-title {
+    font-size: 1.8rem;
+    color: #2196f3;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+::ng-deep .fc-button {
+    background-color: #1e1e1e;
+    border: none;
+    color: #fff;
+    transition: background 0.3s ease, transform 0.2s ease;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+}
+
+::ng-deep .fc-button:hover {
+    background-color: #333;
+    transform: scale(1.05);
+}
+
+::ng-deep .fc-daygrid-day-number {
+    color: #2196f3;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+::ng-deep .fc-daygrid-event {
+    background-color: #2196f3 !important;
+    border: none;
+    color: #ffffff;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+::ng-deep .fc-daygrid-event:hover {
+    background-color: #64b5f6 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+}
+
+::ng-deep .fc-daygrid-day.fc-day-today {
+    background-color: rgba(33, 150, 243, 0.15);
+    transition: background-color 0.3s ease;
+    border-radius: 8px;
+}

@@ -1,13 +1,32 @@
-<h2 mat-dialog-title>Detalles de la Cita</h2>
+<form [formGroup]="citaForm" (ngSubmit)="actualizarCita()">
+  <mat-dialog-content>
+    <p><strong>Cliente:</strong> {{ data.cliente_nombre }}</p>
+    <p><strong>Servicio:</strong> {{ data.servicio_descripcion }}</p>
 
-<mat-dialog-content>
- <p><strong>Servicio:</strong> Servicio #{{ data.servicio_id }}</p>
+    <input formControlName="usuario_id" type="hidden" />
+<input formControlName="servicio_id" type="hidden" />
 
-  <p><strong>Fecha:</strong> {{ data.fecha }}</p>
-  <p><strong>Hora:</strong> {{ data.hora }}</p>
-  <p><strong>Observaciones:</strong> {{ data.observaciones || 'Ninguna' }}</p>
-</mat-dialog-content>
+    <input type="hidden" formControlName="estado">
 
-<mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cerrar</button>
-</mat-dialog-actions>
+    <mat-form-field>
+      <mat-label>Fecha</mat-label>
+      <input matInput type="date" formControlName="fecha" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Hora</mat-label>
+      <input matInput type="time" formControlName="hora" />
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label>Observaciones</mat-label>
+      <textarea matInput formControlName="observaciones" rows="3"></textarea>
+    </mat-form-field>
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button mat-button color="warn" type="button" (click)="eliminarCita()">Eliminar</button>
+    <button mat-button color="primary" type="submit">Actualizar</button>
+    <button mat-button type="button" mat-dialog-close>Cancelar</button>
+  </mat-dialog-actions>
+</form>

@@ -36,7 +36,7 @@ const listarCita = async (req, res) => {
   }
 };
 
-// Obtener cita por ID
+
 const obtenerCitaPorId = async (req, res) => {
   try {
     const { id } = req.params;

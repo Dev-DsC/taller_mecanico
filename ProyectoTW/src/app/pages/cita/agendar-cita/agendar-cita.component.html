@@ -1,14 +1,14 @@
 <form class="formulario" [formGroup]="citaForm" (ngSubmit)="guardarCita()" style="max-width: 600px; margin: auto;">
 
-  <!-- Cliente -->
+  <!-- Usuario (Cliente) -->
   <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
     <mat-label>Seleccionar cliente</mat-label>
-    <mat-select formControlName="cliente_id" required>
-      <mat-option *ngFor="let cliente of clientes" [value]="cliente.cliente_id">
+    <mat-select formControlName="usuario_id" required>
+      <mat-option *ngFor="let cliente of clientes" [value]="cliente.usuario_id">
        {{ cliente.nombre }}
       </mat-option>
     </mat-select>
-    <mat-error *ngIf="citaForm.get('cliente_id')?.hasError('required')">
+    <mat-error *ngIf="citaForm.get('usuario_id')?.hasError('required')">
       El cliente es obligatorio
     </mat-error>
   </mat-form-field>
@@ -66,5 +66,3 @@
 </form>
 
 <app-citas-calendario></app-citas-calendario>
-
-

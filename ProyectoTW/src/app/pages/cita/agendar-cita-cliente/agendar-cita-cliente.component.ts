@@ -52,13 +52,13 @@ export class AgendarCitaClienteComponent implements OnInit {
   }
 
 guardarCita() {
-  console.log('guardarCita() invocado');  // Depuración inicial
+  
   if (this.citaForm.valid) {
-    console.log('Formulario válido');
+   
     this.cargando = true;
 
     const token = this.authService.getTokenCookie();
-    console.log('Token obtenido:', token);
+   
 
     if (!token) {
       this.mensaje = 'Debe iniciar sesión para agendar una cita.';
@@ -71,7 +71,7 @@ guardarCita() {
 
    try {
   const payload = JSON.parse(atob(token.split('.')[1]));
-  console.log('Payload del token:', payload);
+  
   cliente_id = payload.userId;  // Corrección aquí
 } catch (error) {
   console.error('Error al decodificar token:', error);
@@ -96,11 +96,11 @@ guardarCita() {
 };
 
 
-    console.log('Objeto cita a enviar:', cita);
+   
 
     this.CitaService.crearCita(cita).subscribe(
       () => {
-        console.log('Cita creada exitosamente');
+      
         this.mensaje = 'Cita agendada exitosamente';
         this.cargando = false;
         this.citaForm.reset();

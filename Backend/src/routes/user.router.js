@@ -10,6 +10,10 @@ const FacturaController = require('../controllers/factura.controller');
 const FacturaDetalleController = require('../controllers/factura_detalle.controller');
 const CitaController = require('../controllers/cita.controller');
 
+
+routerUsers.post('/enviar-verificacion', UserController.enviarVerificacionEmail);
+routerUsers.get('/verificar-email/:token', UserController.verificarEmail);
+
 routerUsers.post('/login',UserController.login); 
 routerUsers.get('/profileUser',AuthMiddleware,UserController.profileUser); 
 

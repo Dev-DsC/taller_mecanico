@@ -47,12 +47,21 @@ mostrarDetalleCita(info: any) {
   const citaId = Number(info.event.id);
   this.citaService.getCitaPorId(citaId).subscribe(response => {
     const cita = response.data;
-    this.dialog.open(DetalleCitaDialogComponent, {
+
+    const dialogRef = this.dialog.open(DetalleCitaDialogComponent, {
       data: cita,
       width: '400px'
     });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        // Si hubo cambios o eliminaciones, recarga las citas.
+        this.ngOnInit();
+      }
+    });
   });
 }
+
 
 
 

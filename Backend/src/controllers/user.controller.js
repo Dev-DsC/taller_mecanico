@@ -43,10 +43,6 @@ const verificarEmail = async (req, res) => {
 
 
 const login = async (req, res) => {
-  if (!foundUser.email_verificado) {
-    return res.status(403).json({ ok: false, msg: "Debe verificar su correo primero" });
-}
-
   try {
     const { email, password_hash } = req.body;
 
@@ -60,6 +56,10 @@ const login = async (req, res) => {
     const foundUser = await UserModel.findOneUserEmail(email);
     if (!foundUser) {
       return res.status(401).json({ ok: false, msg: "Email not found" });
+    }
+
+    if (!foundUser.email_verificado) {
+      return res.status(403).json({ ok: false, msg: "Debe verificar su correo primero" });
     }
 
     const matchPassword = await bcrypt.compare(
@@ -85,6 +85,7 @@ const login = async (req, res) => {
     });
   }
 };
+
 
 const profileUser = async (req, res) => {
   try {

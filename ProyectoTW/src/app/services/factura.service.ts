@@ -1,12 +1,14 @@
 // factura.service.ts
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { environment } from '../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class FacturaService {
-  private apiUrl = 'http://localhost:3000/api/users'; // Ajusta si necesitas
+   private apiUrl = `${environment.backendUrl}/api/users`;
 
   constructor(private http: HttpClient) {}
 

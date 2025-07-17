@@ -2,7 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BehaviorSubject, debounceTime, distinctUntilChanged, switchMap } from 'rxjs';
+import { environment } from '../environments/environment';
+
+
 
 
 export interface Inventario {
@@ -16,7 +18,7 @@ export interface Inventario {
 })
 
 export class ClienteService {
-  private apiUrl = 'http://localhost:3000/api/users';
+  private apiUrl = `${environment.backendUrl}/api/users`;
 
   constructor(private http: HttpClient) {}
 

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { environment } from '../environments/environment';
+
 
 
 @Injectable({
@@ -9,7 +11,7 @@ import { map } from 'rxjs/operators';
 })
 
 export class ServicioDetalleService {
-  private apiUrl = 'http://localhost:3000/api/users';
+    private apiUrl = `${environment.backendUrl}/api/users`;
 
   constructor(private http: HttpClient) {}
 getFacturaById(id: number) {

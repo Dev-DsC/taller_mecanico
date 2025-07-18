@@ -13,10 +13,14 @@ process.on('unhandledRejection', (reason, promise) => {
 const corsOptions = {
     origin: [
         'https://taller-mecanico-52bo.vercel.app',
-        'https://www.taller-mecanico-52bo.vercel.app' // Por si algún navegador añade www
+        'https://www.taller-mecanico-52bo.vercel.app'
     ],
     credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
 };
+app.use(cors(corsOptions));
+
 
 app.use(cors(corsOptions));
 

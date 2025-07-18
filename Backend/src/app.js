@@ -11,9 +11,13 @@ process.on('unhandledRejection', (reason, promise) => {
 
 // Configuración de CORS para permitir solo tu dominio de Vercel y permitir credenciales
 const corsOptions = {
-    origin: ['https://taller-mecanico-52bo.vercel.app'], // Tu frontend Vercel
-    credentials: true, // Necesario para cookies / headers Authorization
+    origin: [
+        'https://taller-mecanico-52bo.vercel.app',
+        'https://www.taller-mecanico-52bo.vercel.app' // Por si algún navegador añade www
+    ],
+    credentials: true,
 };
+
 app.use(cors(corsOptions));
 
 // Middleware para recibir JSON y formularios

@@ -1,0 +1,16 @@
+{
+  "routes": [
+    "/acerca-de",
+    "/agendar-cita-cliente",
+    "/cita/agendar",
+    "/cliente",
+    "/contactanos",
+    "/inventario",
+    "/register",
+    "/repuestos",
+    "/servicio-contratado",
+    "/servicios",
+    "/ubicacion",
+    "/usuario"
+  ]
+}

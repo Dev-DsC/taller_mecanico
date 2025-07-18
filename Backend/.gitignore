@@ -3,3 +3,4 @@ node_modules
 db.js
 app.js
 index.js
+Backend/src/config/db.js

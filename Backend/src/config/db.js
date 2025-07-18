@@ -12,3 +12,4 @@ db.connect()
     .catch(err => console.error('Database connection error:', err));
 
 module.exports = db;
+//algo

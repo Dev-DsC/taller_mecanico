@@ -54,6 +54,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { CitasCalendarioComponent } from './pages/cita/citas-calendario/citas-calendario.component';
 import { CitasCalendarioClienteComponent } from './pages/cita/citas-calendario-cliente/citas-calendario-cliente.component';
+import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
 
 @NgModule({
   declarations: [
@@ -83,7 +84,8 @@ import { CitasCalendarioClienteComponent } from './pages/cita/citas-calendario-c
     CitasCalendarioComponent,
     DetalleCitaDialogComponent,
     CitasCalendarioComponent,
-    CitasCalendarioClienteComponent
+    CitasCalendarioClienteComponent,
+    VerificacionExitosaComponent
   ],
   imports: [MatDialogModule,FullCalendarModule, BrowserModule, AppRoutingModule, ReactiveFormsModule, BrowserAnimationsModule, FormsModule, MatDatepickerModule,
     MatNativeDateModule,

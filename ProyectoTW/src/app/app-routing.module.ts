@@ -9,7 +9,6 @@ import { AcercaDeComponent } from './pages/acerca-de/acerca-de.component';
 import { ContactanosComponent } from './pages/contactanos/contactanos.component';
 import { AuthComponent } from './auth/auth.component';
 import { InventarioComponent } from './pages/inventario/inventario.component';
-import { AddRespuestoComponent } from './pages/inventario/add-respuestos/add-respuesto.component';
 import { ClienteComponent } from './pages/cliente/cliente.component';
 import { ServicioContratadoComponent } from './pages/servicio-contratado/servicio-contratado.component';
 import { UsuarioComponent } from './pages/usuario/usuario.component';
@@ -18,6 +17,7 @@ import { AgendarCitaComponent } from './pages/cita/agendar-cita/agendar-cita.com
 import { AuthGuard } from './guards/auth.guard';
 import { AddClienteComponent } from './pages/cliente/add-cliente/add-cliente.component';
 import { AddUsuarioComponent } from './pages/usuario/add-usuario/add-usuario.component';
+import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
 
 const routes: Routes = [
   { path: 'servicios', component: ServiciosComponent, data: { animation: 'ServiciosPage', index: 1 } },
@@ -27,7 +27,7 @@ const routes: Routes = [
   { path: 'contactanos', component: ContactanosComponent, data: { animation: 'ContactanosPage', index: 5 } },
   { path: 'register', component: AuthComponent, data: { animation: 'RegisterPage', index: 6 } },
   { path: 'agendar-cita-cliente', component: AgendarCitaClienteComponent, data: { animation: 'AgendarCitaClientePage', index: 6 } },
-
+  { path: 'verificado', component: VerificacionExitosaComponent },
   // Aquí proteges rutas que requieran autenticación y roles específicos
   { 
     path: 'inventario', 

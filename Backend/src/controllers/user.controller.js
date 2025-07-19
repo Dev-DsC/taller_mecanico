@@ -38,7 +38,8 @@ const verificarEmail = async (req, res) => {
         };
         await db.query(query);
 
-        res.redirect('http://localhost:4200/auth?verified=true'); // Angular redirige aquí después de confirmar
+       res.redirect('https://taller-mecanico-52bo.vercel.app/verificado');
+
     } catch (err) {
         res.status(400).json({ ok: false, msg: 'Token inválido o expirado' });
     }

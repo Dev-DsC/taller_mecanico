@@ -6,12 +6,13 @@ import { Login } from '../models/login.model';
 import { LoginResponse } from '../interface/loginResponse';
 import { CookieService } from 'ngx-cookie-service';
 import { BehaviorSubject } from 'rxjs';
+import { environment } from '../../environments/environment';
  
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  API_URL: String = 'http://localhost:3000/api/users'; // Use of best practices with environment variables
+  private API_URL = `${environment.backendUrl}/api/users`;
 
   private userRoleSubject = new BehaviorSubject<string>('');
   userRole$ = this.userRoleSubject.asObservable();

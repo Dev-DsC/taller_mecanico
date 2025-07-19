@@ -9,8 +9,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const enviarCorreoVerificacion = async (email, token) => {
-  const link = `http://172.25.40.2:3000/api/users/verificar-email/${token}`;
-
+  const link = `https://taller-mecanico-t7lv.onrender.com/api/users/verificar-email/${token}`;
 
   await transporter.sendMail({
     from: '"Taller Mecánico San Gabriel 🚗" <daltonsteve22@gmail.com>',
@@ -32,6 +31,5 @@ const enviarCorreoVerificacion = async (email, token) => {
     `
   });
 };
-
 
 module.exports = { enviarCorreoVerificacion };

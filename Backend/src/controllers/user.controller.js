@@ -79,7 +79,9 @@ const login = async (req, res) => {
     if (!matchPassword) {
       console.log('CREDENCIALES INVÁLIDAS');
       return res.status(401).json({ ok: false, msg: "Invalid credentials" });
+      
     }
+    console.log('JWT SECRET:', process.env.JWT_SECRET);
 
     console.log('GENERANDO TOKEN JWT...');
     const token = jwt.sign(

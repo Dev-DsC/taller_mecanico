@@ -9,7 +9,6 @@ process.on('unhandledRejection', (reason, promise) => {
     console.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
-// Configuración de CORS para permitir solo tu dominio de Vercel y permitir credenciales
 const corsOptions = {
     origin: [
         'https://taller-mecanico-52bo.vercel.app',
@@ -21,8 +20,6 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-
-app.use(cors(corsOptions));
 
 // Middleware para recibir JSON y formularios
 app.use(express.json());

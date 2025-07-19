@@ -44,41 +44,55 @@ const verificarEmail = async (req, res) => {
 
 const login = async (req, res) => {
   try {
+    console.log('BODY RECIBIDO EN LOGIN:', req.body);
     const { email, password_hash } = req.body;
 
     if (!email || !password_hash) {
+      console.log('FALTAN CAMPOS:', { email, password_hash });
       return res.status(400).json({
         ok: false,
         msg: "Required fields: email and password",
       });
     }
 
+    console.log('BUSCANDO USUARIO CON EMAIL:', email);
     const foundUser = await UserModel.findOneUserEmail(email);
+    console.log('USUARIO ENCONTRADO:', foundUser);
+
     if (!foundUser) {
+      console.log('NO SE ENCONTRÓ USUARIO');
       return res.status(401).json({ ok: false, msg: "Email not found" });
     }
 
     if (!foundUser.email_verificado) {
+      console.log('USUARIO NO VERIFICADO');
       return res.status(403).json({ ok: false, msg: "Debe verificar su correo primero" });
     }
 
+    console.log('COMPARANDO CONTRASEÑA...');
     const matchPassword = await bcrypt.compare(
       password_hash,
       foundUser.password_hash
     );
+    console.log('RESULTADO PASSWORD MATCH:', matchPassword);
+
     if (!matchPassword) {
+      console.log('CREDENCIALES INVÁLIDAS');
       return res.status(401).json({ ok: false, msg: "Invalid credentials" });
     }
 
+    console.log('GENERANDO TOKEN JWT...');
     const token = jwt.sign(
       { userId: foundUser.usuario_id, rol: foundUser.rol },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
+    console.log('TOKEN CREADO:', token);
     return res.json({ ok: true, token });
+
   } catch (error) {
-    console.error(error);
+    console.error('ERROR EN LOGIN:', error);
     return res.status(500).json({
       ok: false,
       msg: "Server error during login",

@@ -1,43 +1,72 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { CalendarOptions } from '@fullcalendar/core';
-import { CitaService } from '../../../services/cita.service';
+import { CitaService, Cita } from '../../../services/cita.service';
+import { MatDialog } from '@angular/material/dialog';
+import { DetalleCitaDialogClienteComponent } from '../citas-calendario-cliente/detalle-cita-dialog-cliente/detalle-cita-dialog-cliente.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-citas-calendario-cliente',
   templateUrl: './citas-calendario-cliente.component.html',
   styleUrls: ['./citas-calendario-cliente.component.css']
 })
-export class CitasCalendarioClienteComponent implements OnInit {
+export class CitasCalendarioClienteComponent implements OnInit, OnDestroy {
+  calendarOptions?: CalendarOptions;
+  private citasSub?: Subscription;
 
-  calendarOptions: CalendarOptions | null = null;
+  constructor(
+    private citaService: CitaService,
+    @Inject(PLATFORM_ID) private platformId: Object,
+    private dialog: MatDialog
+  ) {}
 
-  constructor(private citaService: CitaService,
-              @Inject(PLATFORM_ID) private platformId: Object) {}
+  ngOnInit() {
+    if (isPlatformBrowser(this.platformId)) {
+      this.citaService.cargarCitas().subscribe();
 
-ngOnInit() {
-  if (isPlatformBrowser(this.platformId)) {
+      this.citasSub = this.citaService.citas$.subscribe((citas: Cita[]) => {
+        this.updateCalendarOptions(citas);
+      });
+    }
+  }
+
+  private updateCalendarOptions(citas: Cita[]) {
+    const events = citas.map(cita => ({
+      title: 'Cita Agendada',
+      date: cita.fecha,
+      id: cita.cita_id.toString(),
+      allDay: true
+    }));
+
     this.calendarOptions = {
-  plugins: [dayGridPlugin, interactionPlugin],
-  initialView: 'dayGridMonth',
-  events: [],
-  displayEventTime: false  // oculta todas las horas
-};
+      plugins: [dayGridPlugin, interactionPlugin],
+      initialView: 'dayGridMonth',
+      displayEventTime: false,
+      events,
+      eventClick: this.mostrarDetalleCita.bind(this)
+    };
+  }
 
+  mostrarDetalleCita(info: any) {
+    const citaId = Number(info.event.id);
+    this.citaService.getCitaPorId(citaId).subscribe(response => {
+      const cita = response.data;
 
-    this.citaService.getCitas().subscribe(response => {
-      const citasArray = response.data;
+      const dialogRef = this.dialog.open(DetalleCitaDialogClienteComponent, {
+        data: cita,
+        width: '400px'
+      });
 
-      if (this.calendarOptions) {
-        this.calendarOptions.events = citasArray.map(cita => ({
-          title: 'Ocupado',   // Título fijo para todas las citas
-          date: cita.fecha
-        }));
-      }
+      dialogRef.afterClosed().subscribe(() => {
+        this.citaService.cargarCitas().subscribe();
+      });
     });
   }
-}
 
+  ngOnDestroy() {
+    this.citasSub?.unsubscribe();
+  }
 }

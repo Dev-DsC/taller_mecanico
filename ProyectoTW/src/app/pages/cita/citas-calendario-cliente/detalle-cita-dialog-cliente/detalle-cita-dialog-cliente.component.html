@@ -1,0 +1,16 @@
+<h2 mat-dialog-title class="text-center">Detalle de la Cita</h2>
+
+<mat-dialog-content class="mat-typography">
+  <mat-divider></mat-divider>
+
+  <div style="padding: 1rem 0;">
+    <p><strong>Fecha:</strong> {{ fecha }}</p>
+    <p><strong>Hora:</strong> {{ hora }}</p>
+  </div>
+
+  <mat-divider></mat-divider>
+</mat-dialog-content>
+
+<mat-dialog-actions align="center">
+  <button mat-flat-button color="primary" (click)="cerrar()">Cerrar</button>
+</mat-dialog-actions>

@@ -1,10 +1,94 @@
-/* CSS (en el .component.css) */
-.formulario {
-  background-color: rgba(0, 0, 0, 0.95); /* blanco semitransparente */
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-  width: 100%;
+.formulario-cita {
   max-width: 600px;
   margin: 40px auto;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.7);
+  background-color: #121212; /* fondo negro oscuro */
+  color: #eee; /* texto claro para contraste */
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.titulo-formulario {
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 600;
+  color: #4fc3f7; /* azul claro */
+  font-size: 1.8rem;
+}
+
+.campo-formulario {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+/* Texto dentro de inputs y selects */
+.mat-form-field-appearance-outline .mat-input-element,
+.mat-form-field-appearance-outline .mat-select-value-text {
+  color: #eee !important; /* texto claro dentro inputs */
+}
+
+/* Placeholder texto */
+.mat-form-field-appearance-outline .mat-input-element::placeholder {
+  color: #bbb !important;
+  opacity: 1 !important;
+}
+
+/* Línea y borde de inputs */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #4fc3f7 !important;
+  border-color: #4fc3f7 !important;
+}
+
+/* Focus en inputs */
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  border-color: #82cfff !important;
+}
+
+/* Errores */
+.mat-error {
+  color: #ff5252 !important;
+  font-weight: 600;
+}
+
+/* Botón */
+.contenedor-boton {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.boton-formulario {
+  padding: 12px 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  background-color: #0288d1; /* azul */
+  color: #fff;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.boton-formulario:hover:not(:disabled) {
+  background-color: #0277bd !important;
+  color: #fff;
+}
+
+/* Deshabilitado */
+button:disabled {
+  background-color: #555 !important;
+  color: #999 !important;
+  cursor: not-allowed;
+}
+
+::ng-deep .snackbar-error {
+  background-color: #e53935;
+  color: white;
+}
+
+::ng-deep .snackbar-ok {
+  background-color: #43a047;
+  color: white;
 }

@@ -1,0 +1,78 @@
+.formulario-cita {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+  background-color: #121212; /* fondo negro oscuro */
+  color: #eee; /* texto claro para todo el formulario */
+}
+
+.titulo-formulario {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  color: #90caf9; /* azul claro */
+}
+
+.campo-formulario {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+/* Estilo específico para inputs y selects dentro de Angular Material */
+.mat-form-field-appearance-outline .mat-input-element,
+.mat-form-field-appearance-outline .mat-select-value-text {
+  color: #eee !important; /* texto claro en inputs y selects */
+}
+
+/* Placeholder texto */
+.mat-form-field-appearance-outline .mat-input-element::placeholder {
+  color: #bbb !important;
+  opacity: 1 !important;
+}
+
+/* Bordes de los inputs */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #90caf9; /* borde azul claro */
+  border-color: #90caf9 !important;
+}
+
+.contenedor-boton {
+  display: flex;
+  justify-content: center;
+  margin-top: 28px;
+}
+
+.boton-formulario {
+  padding: 12px 28px;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+  background-color: #0288d1; /* azul */
+  color: #fff;
+  transition: background-color 0.3s ease;
+  cursor: pointer;
+  border: none;
+}
+
+.boton-formulario:hover:not(:disabled) {
+  background-color: #0277bd !important;
+  color: #fff;
+}
+
+/* Deshabilitado */
+button:disabled {
+  background-color: #555 !important;
+  color: #999 !important;
+  cursor: not-allowed;
+}
+::ng-deep .snackbar-error {
+  background-color: #e53935;
+  color: white;
+}
+::ng-deep .snackbar-ok {
+  background-color: #43a047;
+  color: white;
+}

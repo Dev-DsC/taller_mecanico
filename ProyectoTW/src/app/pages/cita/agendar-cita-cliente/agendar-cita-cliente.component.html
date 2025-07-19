@@ -1,7 +1,9 @@
-<form class="formulario" [formGroup]="citaForm" (ngSubmit)="guardarCita()" style="max-width: 600px; margin: auto;">
+<form class="formulario-cita" [formGroup]="citaForm" (ngSubmit)="guardarCita()">
+
+  <h2 class="titulo-formulario">Agendar una Cita</h2>
 
   <!-- Servicio -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar servicio</mat-label>
     <mat-select formControlName="servicio_id" required>
       <mat-option *ngFor="let servicio of servicios" [value]="servicio.servicio_id">
@@ -14,15 +16,9 @@
   </mat-form-field>
 
   <!-- Fecha -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar una fecha</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      placeholder="DD/MM/YYYY"
-      formControlName="fecha"
-      required
-    />
+    <input matInput [matDatepicker]="picker" placeholder="DD/MM/YYYY" formControlName="fecha" required />
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-datepicker #picker></mat-datepicker>
     <mat-hint>DD/MM/YYYY</mat-hint>
@@ -32,7 +28,7 @@
   </mat-form-field>
 
   <!-- Hora -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar hora</mat-label>
     <input matInput type="time" formControlName="hora" required />
     <mat-error *ngIf="citaForm.get('hora')?.hasError('required')">
@@ -41,14 +37,20 @@
   </mat-form-field>
 
   <!-- Observaciones -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Observaciones</mat-label>
     <textarea matInput formControlName="observaciones" rows="3"></textarea>
   </mat-form-field>
 
   <!-- Botón de enviar -->
-  <button mat-raised-button color="primary" type="submit" [disabled]="citaForm.invalid">
-    Agendar Cita
-  </button>
+  <div class="contenedor-boton">
+    <button mat-raised-button color="primary" type="submit" [disabled]="citaForm.invalid" class="boton-formulario">
+      <i class="fas fa-calendar-check"></i> Agendar Cita
+    </button>
+  </div>
+
 </form>
-<div> <app-citas-calendario></app-citas-calendario></div>
+
+<div>
+  <app-citas-calendario-cliente></app-citas-calendario-cliente>
+</div>

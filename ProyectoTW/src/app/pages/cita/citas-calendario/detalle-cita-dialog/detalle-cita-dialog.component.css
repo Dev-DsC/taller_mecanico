@@ -1,7 +1,98 @@
-mat-dialog-content {
-  font-family: Roboto, sans-serif;
-  font-size: 14px;
+/* Contenedor general del formulario */
+form {
+  max-width: 480px;
+  margin: 0 auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #333;
 }
+
+/* Estilos para párrafos informativos */
+form p {
+  font-size: 1rem;
+  margin: 12px 0;
+  color: #ffffff;
+}
+
+/* Negrita para etiquetas dentro de párrafos */
+form p strong {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+/* Estilo para los mat-form-field para hacerlo uniforme y con espacio */
+mat-form-field {
+  width: 100%;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+/* Inputs y textarea con colores suaves y bordes redondeados */
+.mat-form-field-appearance-outline .mat-form-field-outline {
+  border-color: #1a73e8;
+  border-radius: 6px;
+}
+
+.mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  border-color: #4285f4;
+}
+
+.mat-input-element {
+  color: #222;
+  font-size: 1rem;
+}
+
+/* Placeholder con color tenue */
+.mat-input-element::placeholder {
+  color: #888;
+  opacity: 1;
+}
+
+/* Botones del diálogo */
 mat-dialog-actions {
-  margin-top: 20px;
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Botón eliminar rojo con hover */
+button[color="warn"] {
+  background-color: #f44336;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 20px;
+  transition: background-color 0.3s ease;
+}
+
+button[color="warn"]:hover {
+  background-color: #d32f2f;
+}
+
+/* Botón actualizar azul con hover */
+button[color="primary"] {
+  background-color: #1a73e8;
+  color: white;
+  border-radius: 6px;
+  padding: 8px 24px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button[color="primary"]:hover {
+  background-color: #1669c1;
+}
+
+/* Botón cancelar más neutral */
+button[mat-dialog-close] {
+  background-color: #eee;
+  color: #555;
+  border-radius: 6px;
+  padding: 8px 20px;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+button[mat-dialog-close]:hover {
+  background-color: #ddd;
+  cursor: pointer;
 }

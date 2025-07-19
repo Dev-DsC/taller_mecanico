@@ -1,11 +1,13 @@
-<form class="formulario" [formGroup]="citaForm" (ngSubmit)="guardarCita()" style="max-width: 600px; margin: auto;">
+<form class="formulario-cita" [formGroup]="citaForm" (ngSubmit)="guardarCita()">
+
+  <h2 class="titulo-formulario">Agendar una Cita</h2>
 
   <!-- Usuario (Cliente) -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar cliente</mat-label>
     <mat-select formControlName="usuario_id" required>
       <mat-option *ngFor="let cliente of clientes" [value]="cliente.usuario_id">
-       {{ cliente.nombre }}
+        {{ cliente.nombre }}
       </mat-option>
     </mat-select>
     <mat-error *ngIf="citaForm.get('usuario_id')?.hasError('required')">
@@ -14,7 +16,7 @@
   </mat-form-field>
 
   <!-- Servicio -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar servicio</mat-label>
     <mat-select formControlName="servicio_id" required>
       <mat-option *ngFor="let servicio of servicios" [value]="servicio.servicio_id">
@@ -27,25 +29,27 @@
   </mat-form-field>
 
   <!-- Fecha -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
-    <mat-label>Seleccionar una fecha</mat-label>
-    <input
-      matInput
-      [matDatepicker]="picker"
-      placeholder="DD/MM/YYYY"
-      formControlName="fecha"
-      required
-    />
-    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-    <mat-datepicker #picker></mat-datepicker>
-    <mat-hint>DD/MM/YYYY</mat-hint>
-    <mat-error *ngIf="citaForm.get('fecha')?.hasError('required')">
-      La fecha es obligatoria
-    </mat-error>
-  </mat-form-field>
+ <mat-form-field appearance="outline" class="campo-formulario">
+  <mat-label>Seleccionar una fecha</mat-label>
+  <input
+    matInput
+    [matDatepicker]="picker"
+    placeholder="DD/MM/YYYY"
+    formControlName="fecha"
+    required
+    [min]="hoyString"
+  />
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-datepicker #picker></mat-datepicker>
+  <mat-hint>DD/MM/YYYY</mat-hint>
+  <mat-error *ngIf="citaForm.get('fecha')?.hasError('required')">
+    La fecha es obligatoria
+  </mat-error>
+</mat-form-field>
+
 
   <!-- Hora -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Seleccionar hora</mat-label>
     <input matInput type="time" formControlName="hora" required />
     <mat-error *ngIf="citaForm.get('hora')?.hasError('required')">
@@ -54,15 +58,20 @@
   </mat-form-field>
 
   <!-- Observaciones -->
-  <mat-form-field appearance="outline" style="width: 100%; margin-bottom: 16px;">
+  <mat-form-field appearance="outline" class="campo-formulario">
     <mat-label>Observaciones</mat-label>
     <textarea matInput formControlName="observaciones" rows="3"></textarea>
   </mat-form-field>
 
   <!-- Botón de enviar -->
-  <button mat-raised-button color="primary" type="submit" [disabled]="citaForm.invalid">
-    Agendar Cita
-  </button>
+  <div class="contenedor-boton">
+    <button mat-raised-button color="primary" type="submit" [disabled]="citaForm.invalid" class="boton-formulario">
+      <i class="fas fa-calendar-check"></i> Agendar Cita
+    </button>
+  </div>
+
 </form>
 
-<app-citas-calendario></app-citas-calendario>
+<div>
+  <app-citas-calendario></app-citas-calendario>
+</div>

@@ -15,6 +15,7 @@ export class AgendarCitaClienteComponent implements OnInit {
   servicios: servicios[] = [];
   mensaje: string = '';
   cargando: boolean = false;
+  hoyString: string = '';
 
   constructor(
     private fb: FormBuilder,
@@ -24,6 +25,7 @@ export class AgendarCitaClienteComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.hoyString = this.formatearFecha(new Date());
     this.initForm();
     this.cargarServicios();
   }
@@ -48,65 +50,61 @@ export class AgendarCitaClienteComponent implements OnInit {
     const year = d.getFullYear();
     const month = ('0' + (d.getMonth() + 1)).slice(-2);
     const day = ('0' + d.getDate()).slice(-2);
-    return `${year}-${month}-${day}`; // Ej: '2025-07-10'
+    return `${year}-${month}-${day}`;
   }
 
-guardarCita() {
-  
-  if (this.citaForm.valid) {
-   
+  guardarCita() {
+    if (this.citaForm.invalid) {
+      this.mensaje = 'Por favor, complete todos los campos requeridos.';
+      return;
+    }
+
     this.cargando = true;
-
     const token = this.authService.getTokenCookie();
-   
-
     if (!token) {
       this.mensaje = 'Debe iniciar sesión para agendar una cita.';
       this.cargando = false;
-      console.error('Token no encontrado. El usuario debe iniciar sesión.');
       return;
     }
 
     let cliente_id: number | null = null;
-
-   try {
-  const payload = JSON.parse(atob(token.split('.')[1]));
-  
-  cliente_id = payload.userId;  // Corrección aquí
-} catch (error) {
-  console.error('Error al decodificar token:', error);
-  this.mensaje = 'Error de autenticación. Por favor inicia sesión nuevamente.';
-  this.cargando = false;
-  return;
-}
-
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      cliente_id = payload.userId;
+    } catch (error) {
+      this.mensaje = 'Error de autenticación. Por favor inicia sesión nuevamente.';
+      this.cargando = false;
+      return;
+    }
 
     if (!cliente_id) {
       this.mensaje = 'No se pudo obtener el ID del usuario desde el token.';
       this.cargando = false;
-      console.error('ID del cliente no encontrado en el token.');
       return;
     }
 
-   const cita = {
-  ...this.citaForm.value,
-  fecha: this.formatearFecha(this.citaForm.value.fecha),
-  usuario_id: cliente_id,
-  estado: 'PENDIENTE'
-};
+    const fechaSeleccionada = new Date(this.citaForm.value.fecha);
+    const hoy = new Date(this.hoyString);
+    if (fechaSeleccionada < hoy) {
+      this.mensaje = 'No se puede agendar una cita en una fecha pasada.';
+      this.cargando = false;
+      return;
+    }
 
+    const cita = {
+      ...this.citaForm.value,
+      fecha: this.formatearFecha(this.citaForm.value.fecha),
+      usuario_id: cliente_id,
+      estado: 'PENDIENTE'
+    };
 
-   
-
-    this.CitaService.crearCita(cita).subscribe(
-      () => {
-      
+    this.CitaService.crearCitaYActualizar(cita).subscribe({
+      next: () => {
         this.mensaje = 'Cita agendada exitosamente';
         this.cargando = false;
         this.citaForm.reset();
       },
-      (error) => {
-        console.error('Error al crear cita:', error);
+      error: (error) => {
         if (error.code === '23505') {
           this.mensaje = 'Ya existe una cita agendada para esa fecha y hora.';
         } else {
@@ -114,12 +112,6 @@ guardarCita() {
         }
         this.cargando = false;
       }
-    );
-  } else {
-    console.warn('Formulario inválido:', this.citaForm.errors);
-    this.mensaje = 'Por favor, complete todos los campos requeridos.';
+    });
   }
-}
-
-
 }

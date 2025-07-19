@@ -13,6 +13,7 @@ import { AlertService } from '../services/aler.service';
 export class AuthComponent {
  loginForm: FormGroup;
  showPassword: boolean = false;
+errorMessage: string = ''; // <--- propiedad para mostrar error en pantalla
 
   constructor(
     private formBuilder: FormBuilder,
@@ -26,25 +27,37 @@ export class AuthComponent {
     });
   }
 
-  login() {
-   
+   login() {
+    this.errorMessage = ''; // limpiar mensaje previo
     this.authService.signIn(this.loginForm.value).subscribe({
       next: (data) => {
-        
+        this.alertService.login(); // mensaje éxito (toast u otro)
+        this.router.navigate(['/servicio']).then(() => {
+          window.location.reload();
+        });
       },
       error: (errorData) => {
         console.error(errorData);
-        this.alertService.errorCredenciales();
-      },
-      complete: () => {
-          this.alertService.login();
-          this.router.navigate(['/servicio']).then(() => {
-            window.location.reload();
-          });;
 
-      },
+        const backendMsg = errorData.error?.msg;
+
+        switch(backendMsg) {
+          case 'Email not found':
+            this.errorMessage = 'Correo no encontrado';
+            break;
+          case 'Debe verificar su correo primero':
+            this.errorMessage = 'Debe verificar su correo antes de ingresar';
+            break;
+          case 'Invalid credentials':
+            this.errorMessage = 'Credenciales inválidas';
+            break;
+          default:
+            this.errorMessage = 'Error desconocido. Intenta de nuevo.';
+            break;
+        }
+      }
     });
-    this.loginForm.reset(); // Limpia el formulario después de guardar
-
+    this.loginForm.reset();
   }
 }
+

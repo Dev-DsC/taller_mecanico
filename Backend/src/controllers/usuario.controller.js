@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const UsuarioModel = require('../models/usuario.model');
 
 // Crear nuevo usuario
+const { enviarCorreoVerificacion } = require('../services/email.service'); // asegúrate de importarlo
+
 const create = async (req, res) => {
     try {
         const { nombre, email, password_hash, rol, telefono, direccion } = req.body;
@@ -23,9 +25,24 @@ const create = async (req, res) => {
             rol,
             telefono,
             direccion,
+            email_verificado: false, // Asegúrate que el modelo permita esto o lo ponga por defecto
         });
 
-        res.status(201).json({ ok: true, usuario: newUser });
+        // Generar token de verificación
+        const token = jwt.sign(
+            { email },
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' }
+        );
+
+        // Enviar correo de verificación
+        await enviarCorreoVerificacion(email, token);
+
+        res.status(201).json({ 
+            ok: true, 
+            usuario: newUser, 
+            msg: 'Usuario creado correctamente. Revisa tu correo para verificar tu cuenta.' 
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({ ok: false, msg: 'Error al crear usuario' });

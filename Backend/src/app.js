@@ -13,13 +13,14 @@ process.on('unhandledRejection', (reason, promise) => {
 const corsOptions = {
     origin: [
         'https://taller-mecanico-52bo.vercel.app',
-        'https://www.taller-mecanico-52bo.vercel.app'
+        'https://www.taller-mecanico-52bo.vercel.app',
+        'http://localhost:4200'   // <-- Añade esta línea para desarrollo local
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true   // recomendable si usas cookies o autenticación basada en tokens
 };
 app.use(cors(corsOptions));
-
 
 
 // Middleware para recibir JSON y formularios

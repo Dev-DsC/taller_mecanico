@@ -5,7 +5,10 @@ const db = require('../config/db');
 const UsuarioModel = require('../models/usuario.model');
 const { enviarCorreoVerificacion } = require('../services/email.service');
 
+
 const enviarVerificacionEmail = async (req, res) => {
+  console.log('enviarCorreoVerificacion es:', typeof enviarCorreoVerificacion);
+
     const { email } = req.body;
     const usuario = await UsuarioModel.findOneUserEmail(email);
     if (!usuario) return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
@@ -79,7 +82,7 @@ const login = async (req, res) => {
     if (!matchPassword) {
       console.log('CREDENCIALES INVÁLIDAS');
       return res.status(401).json({ ok: false, msg: "Invalid credentials" });
-      
+
     }
     console.log('JWT SECRET:', process.env.JWT_SECRET);
 

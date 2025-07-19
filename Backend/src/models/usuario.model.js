@@ -101,15 +101,23 @@ const updateUser = async (id, { nombre, email, rol }) => {
 
 
 
-// Eliminar usuario
 const deleteUser = async (id) => {
-    const query = {
-        text: 'DELETE FROM public.usuarios WHERE usuario_id = $1;',
-        values: [id],
-    };
-    await db.query(query);
-    return { msg: 'Usuario eliminado correctamente' };
+  const client = await db.connect();
+
+  try {
+    await client.query('BEGIN');
+    await client.query('DELETE FROM public.clientes WHERE usuario_id = $1;', [id]);
+    await client.query('DELETE FROM public.usuarios WHERE usuario_id = $1;', [id]);
+    await client.query('COMMIT');
+    return { msg: 'Usuario y cliente(s) eliminados correctamente' };
+  } catch (error) {
+    await client.query('ROLLBACK');
+    throw error;
+  } finally {
+    client.release();
+  }
 };
+
 
 const UsuarioModel = {
     createUser,

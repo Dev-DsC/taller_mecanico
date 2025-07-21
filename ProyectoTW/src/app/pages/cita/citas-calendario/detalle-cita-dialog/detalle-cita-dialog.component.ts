@@ -33,10 +33,10 @@ export class DetalleCitaDialogComponent implements OnInit {
   }
 
 actualizarCita() {
-  console.log('Clic en actualizar');
+
 
   if (this.citaForm.valid) {
-    console.log('Formulario válido:', this.citaForm.value);
+  
     const citaData = { ...this.citaForm.value };
 
     citaData.fecha = citaData.fecha?.toString().split('T')[0];
@@ -46,7 +46,7 @@ actualizarCita() {
 
     this.citaService.actualizarCita(this.data.cita_id, citaData).subscribe({
       next: () => {
-        console.log('Cita actualizada correctamente');
+       
         this.dialogRef.close(true);
       },
       error: (error) => {

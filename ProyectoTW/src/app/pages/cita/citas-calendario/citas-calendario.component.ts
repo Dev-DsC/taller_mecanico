@@ -15,7 +15,14 @@ import { Subscription } from 'rxjs';
 })
 export class CitasCalendarioComponent implements OnInit, OnDestroy {
 
-  calendarOptions?: CalendarOptions;
+  calendarOptions: CalendarOptions = {
+    plugins: [dayGridPlugin, interactionPlugin],
+    initialView: 'dayGridMonth',
+    displayEventTime: false,
+    events: [],
+    eventClick: this.mostrarDetalleCita.bind(this),
+  };
+
   private citasSub?: Subscription;
 
   constructor(
@@ -26,15 +33,18 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {
+      // Cargar inicialmente las citas y actualizar el BehaviorSubject
       this.citaService.cargarCitas().subscribe();
 
+      // Suscribirse para actualizar el calendario cuando las citas cambien
       this.citasSub = this.citaService.citas$.subscribe((citas: Cita[]) => {
-        this.updateCalendarOptions(citas);
+        this.actualizarEventosCalendario(citas);
       });
     }
   }
 
-  private updateCalendarOptions(citas: Cita[]) {
+  actualizarEventosCalendario(citas: Cita[]) {
+    // Mapear citas a eventos compatibles con fullcalendar
     const events = citas.map(cita => ({
       title: 'Cita Agendada',
       date: cita.fecha,
@@ -42,12 +52,10 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
       allDay: true
     }));
 
+    // Actualizar solo la propiedad events para que fullcalendar refresque sin recrear toda la config
     this.calendarOptions = {
-      plugins: [dayGridPlugin, interactionPlugin],
-      initialView: 'dayGridMonth',
-      displayEventTime: false,
+      ...this.calendarOptions,
       events,
-      eventClick: this.mostrarDetalleCita.bind(this)
     };
   }
 
@@ -63,7 +71,7 @@ export class CitasCalendarioComponent implements OnInit, OnDestroy {
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
-          // Si eliminó o actualizó, recarga la lista para reflejar cambios
+          // Recargar las citas para reflejar cambios tras editar/eliminar
           this.citaService.cargarCitas().subscribe();
         }
       });

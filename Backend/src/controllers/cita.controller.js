@@ -1,29 +1,29 @@
 const CitaModel = require('./../models/cita.model.js');
 
 // Crear nueva cita
-const crearCita = async (req, res) => {
+async function crearCita(req, res) {
   try {
     const { usuario_id, servicio_id, fecha, hora, estado, observaciones } = req.body;
 
-    const citaCreada = await CitaModel.crear({
+    const estadoCita = estado || 'PENDIENTE';
+
+    // Usar estadoCita al insertar en DB
+    const nuevaCita = await CitaModel.crear({
       usuario_id,
       servicio_id,
       fecha,
       hora,
-      estado,
-      observaciones,
+      estado: estadoCita,
+      observaciones
     });
 
-    return res.status(201).json({ ok: true, msg: "Cita agendada", data: citaCreada });
+    res.status(201).json(nuevaCita);
   } catch (error) {
-    if (error.code === 'P0001') {
-      res.status(400).json({ error: error.message });
-    } else {
-      console.error(error);
-      res.status(500).json({ error: 'Internal Server Error' });
-    }
+    console.error(error);
+    res.status(500).json({ error: 'Error al crear cita' });
   }
-};
+}
+
 
 // Listar citas
 const listarCita = async (req, res) => {

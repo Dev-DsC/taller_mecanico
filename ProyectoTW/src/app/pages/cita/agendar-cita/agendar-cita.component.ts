@@ -1,11 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { ClienteService } from '../../../services/cliente.service';
+// Importa solo UsuarioService, ya no necesitas ClienteService
 import { ServicioDetalleService } from '../../../services/servicio-detalle.service';
-import { clientes } from '../../../models/cliente.model';
 import { servicios } from '../../../models/servicio.model';
 import { CitaService } from '../../../services/cita.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { UsuarioService } from '../../../services/usuario.service';
 
 @Component({
   selector: 'app-agendar-cita',
@@ -14,29 +14,27 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 })
 export class AgendarCitaComponent implements OnInit {
   citaForm!: FormGroup;
-  clientes: clientes[] = [];
+  clientes: any[] = [];  // Cambié a any[] para evitar conflicto, o crea interface adecuada
   servicios: servicios[] = [];
   mensaje: string = '';
   cargando: boolean = false;
 
- constructor(
-  private fb: FormBuilder,
-  private clienteService: ClienteService,
-  private ServicioDetalleService: ServicioDetalleService,
-  private citaService: CitaService,
-  private snackBar: MatSnackBar
-) {}
+  hoyString: string = '';
 
+  constructor(
+    private fb: FormBuilder,
+    private usuarioService: UsuarioService, // usa usuarioService
+    private ServicioDetalleService: ServicioDetalleService,
+    private citaService: CitaService,
+    private snackBar: MatSnackBar
+  ) {}
 
- hoyString: string = '';
-
-ngOnInit(): void {
-  this.hoyString = this.formatearFecha(new Date());
-  this.initForm();
-  this.cargarClientes();
-  this.cargarServicios();
-}
-
+  ngOnInit(): void {
+    this.hoyString = this.formatearFecha(new Date());
+    this.initForm();
+    this.cargarClientes();
+    this.cargarServicios();
+  }
 
   initForm() {
     this.citaForm = this.fb.group({
@@ -50,14 +48,19 @@ ngOnInit(): void {
   }
 
   cargarClientes() {
-    this.clienteService.getCliente().subscribe(data => {
-      this.clientes = data;
+    this.usuarioService.getUsuarios().subscribe(data => {
+      // Filtra solo usuarios con rol 'cliente'
+      this.clientes = data.filter(u => u.rol === 'cliente');
+    }, error => {
+      console.error('Error cargando usuarios:', error);
     });
   }
 
   cargarServicios() {
     this.ServicioDetalleService.getServicioAll().subscribe(data => {
       this.servicios = data;
+    }, error => {
+      console.error('Error cargando servicios:', error);
     });
   }
 
@@ -69,51 +72,49 @@ ngOnInit(): void {
     return `${year}-${month}-${day}`;
   }
 
- guardarCita() {
-  if (this.citaForm.invalid) {
-    this.snackBar.open('Por favor, complete todos los campos requeridos.', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-error'
-    });
-    return;
-  }
-
-  const fechaSeleccionada = new Date(this.citaForm.value.fecha);
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-
-  if (fechaSeleccionada < hoy) {
-    this.snackBar.open('No puedes agendar citas en fechas pasadas.', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-error'
-    });
-    return;
-  }
-
-  this.cargando = true;
-
-  const cita = { ...this.citaForm.value };
-  cita.fecha = this.formatearFecha(cita.fecha);
-
-  this.citaService.crearCitaYActualizar(cita).subscribe({
-    next: () => {
-      this.snackBar.open('Cita agendada exitosamente.', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snackbar-ok'
-      });
-      this.citaForm.reset();
-      this.cargando = false;
-    },
-    error: (error) => {
-      console.error(error);
-      this.snackBar.open('Error al agendar la cita.', 'Cerrar', {
+  guardarCita() {
+    if (this.citaForm.invalid) {
+      this.snackBar.open('Por favor, complete todos los campos requeridos.', 'Cerrar', {
         duration: 3000,
         panelClass: 'snackbar-error'
       });
-      this.cargando = false;
+      return;
     }
-  });
-}
 
+    const fechaSeleccionada = new Date(this.citaForm.value.fecha);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
+    if (fechaSeleccionada < hoy) {
+      this.snackBar.open('No puedes agendar citas en fechas pasadas.', 'Cerrar', {
+        duration: 3000,
+        panelClass: 'snackbar-error'
+      });
+      return;
+    }
+
+    this.cargando = true;
+
+    const cita = { ...this.citaForm.value };
+    cita.fecha = this.formatearFecha(cita.fecha);
+
+    this.citaService.crearCitaYActualizar(cita).subscribe({
+      next: () => {
+        this.snackBar.open('Cita agendada exitosamente.', 'Cerrar', {
+          duration: 3000,
+          panelClass: 'snackbar-ok'
+        });
+        this.citaForm.reset();
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.snackBar.open('Error al agendar la cita.', 'Cerrar', {
+          duration: 3000,
+          panelClass: 'snackbar-error'
+        });
+        this.cargando = false;
+      }
+    });
+  }
 }

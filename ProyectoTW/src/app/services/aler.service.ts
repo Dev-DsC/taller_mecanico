@@ -5,6 +5,9 @@ import Swal from 'sweetalert2';
   providedIn: 'root',
 })
 export class AlertService {
+  error(arg0: string) {
+    throw new Error('Method not implemented.');
+  }
   constructor() {}
 
   register() {

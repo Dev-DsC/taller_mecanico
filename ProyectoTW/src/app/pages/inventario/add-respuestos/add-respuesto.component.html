@@ -57,10 +57,15 @@
                       </div>
                       <div class="d-flex flex-row align-items-center mb-4">
                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
-                        <div data-mdb-input-init class="form-outline flex-fill mb-0">
-                          <input type="text" id="form3Example4c" class="form-control" formControlName="imagen"/>
-                          <label class="form-label" for="form3Example4c">imagen</label>
-                        </div>
+                       <form (ngSubmit)="create()" #form="ngForm">
+                    <input type="file" (change)="onFileSelected($event)" accept="image/*" required />
+                    
+                    <div *ngIf="imagenBase64">
+                      <p>Vista previa:</p>
+                      <img [src]="imagenBase64" alt="Previsualización" width="200">
+                    </div>                 
+                </form>
+
                       </div>
                       <div class="d-flex flex-row align-items-center mb-4">
                         <i class="fas fa-lock fa-lg me-3 fa-fw"></i>

@@ -14,22 +14,28 @@ const corsOptions = {
     origin: [
         'https://taller-mecanico-52bo.vercel.app',
         'https://www.taller-mecanico-52bo.vercel.app',
-        'http://localhost:4200'   // <-- Añade esta línea para desarrollo local
+        'http://localhost:4200'
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true   // recomendable si usas cookies o autenticación basada en tokens
+    credentials: true
 };
 app.use(cors(corsOptions));
 
 
 // Middleware para recibir JSON y formularios
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ¡¡¡CAMBIO AQUÍ: AUMENTA EL LÍMITE DE TAMAÑO DEL CUERPO DE LA PETICIÓN!!!
+// '50mb' es un buen punto de partida, ajusta según el tamaño máximo esperado de tus imágenes.
+// Puedes usar '10mb', '20mb', '100mb' etc., pero 50mb suele ser suficiente para la mayoría de las imágenes web.
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true })); // También importante para formularios grandes
 
 // Middleware para capturar errores generales
 app.use((err, req, res, next) => {
     console.error(err.stack);
+    // Si quieres más detalles del error en desarrollo:
+    // res.status(500).send({ error: 'Something went wrong!', details: err.message });
+    // En producción, es mejor solo el mensaje genérico:
     res.status(500).send({ error: 'Something went wrong!' });
 });
 

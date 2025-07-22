@@ -1,59 +1,66 @@
-<div class="mx-auto w-75 p-1">
-  <a
-    class="btn btn-warning m-2"
-    data-bs-toggle="modal"
-    data-bs-target="#ServicioDetalle"
-    >Nuevo</a
-  >
-  <div class="modal" id="ServicioDetalle">
+<div class="contenedor-inventario">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold">Servicios Contratados</h4>
+    <a class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ServicioDetalle">
+      <i class="fa-solid fa-plus me-1"></i> Nuevo Servicio
+    </a>
+  </div>
+
+  <div class="modal fade" id="ServicioDetalle">
     <div class="modal-dialog modal-lg">
       <div class="modal-content container-fluid modalClose">
         <app-add-servicio-contrado></app-add-servicio-contrado>
       </div>
     </div>
   </div>
-<div *ngIf="mensaje" class="alert alert-info mt-3 text-center">
+
+  <div *ngIf="mensaje" class="alert alert-info text-center">
     {{ mensaje }}
   </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Servicio</th>
-        <th scope="col">Cliente</th>
-        <th scope="col">Repuesto</th>
-        <th scope="col">Cantidad</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of servicio; let i = index">
-        <th scope="row">{{ i + 1 }}</th>
-        <td>{{ item.servicio_descripcion }}</td>
-        <td>{{ item.cliente_nombre }}</td>
-        <td>{{ item.repuesto }}</td>
-        <td>{{ item.cantidad }}</td>
-        <td>
-          <button
-            class="btn btn-sm btn-primary me-2"
-            (click)="previsualizar(item)"
-          >
-            Previsualizar
-          </button>
-          <button
-            class="btn btn-sm btn-success"
-            [disabled]="cargandoFacturaId === item.detalle_id"
-            (click)="descargarFacturaPorDetalleId(item.detalle_id)"
-          >
-            <span
-              *ngIf="cargandoFacturaId === item.detalle_id"
-              class="spinner-border spinner-border-sm me-1"
-              role="status"
-            ></span>
-            Descargar
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+
+  <div class="table-responsive shadow rounded-3">
+    <table class="table table-hover align-middle table-bordered table-striped tabla-inventario">
+      <thead class="table-dark">
+        <tr class="text-center">
+          <th>#</th>
+          <th>Servicio</th>
+          <th>Cliente</th>
+          <th>Repuesto</th>
+          <th>Cantidad</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of servicio; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ item.servicio_descripcion }}</td>
+          <td>{{ item.cliente_nombre }}</td>
+          <td>{{ item.repuesto }}</td>
+          <td>{{ item.cantidad }}</td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                (click)="previsualizar(item)"
+              >
+                <i class="fa-solid fa-eye me-1"></i> Ver
+              </button>
+              <button
+                class="btn btn-outline-success btn-sm"
+                [disabled]="cargandoFacturaId === item.detalle_id"
+                (click)="descargarFacturaPorDetalleId(item.detalle_id)"
+              >
+                <span
+                  *ngIf="cargandoFacturaId === item.detalle_id"
+                  class="spinner-border spinner-border-sm me-1"
+                  role="status"
+                ></span>
+                <i class="fa-solid fa-download me-1"></i> Descargar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

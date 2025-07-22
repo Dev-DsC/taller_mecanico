@@ -18,6 +18,7 @@ import { AuthGuard } from './guards/auth.guard';
 import { AddClienteComponent } from './pages/cliente/add-cliente/add-cliente.component';
 import { AddUsuarioComponent } from './pages/usuario/add-usuario/add-usuario.component';
 import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
+import { AddRespuestoComponent } from './pages/inventario/add-respuestos/add-respuesto.component';
 
 const routes: Routes = [
   { path: 'servicios', component: ServiciosComponent, data: { animation: 'ServiciosPage', index: 1 } },
@@ -35,6 +36,19 @@ const routes: Routes = [
     canActivate: [AuthGuard], 
     data: { roles: ['admin'], animation: 'InventarioPage', index: 7 } 
   },
+   {
+  path: 'inventario/add',
+  component: AddRespuestoComponent,
+  canActivate: [AuthGuard],
+  data: { roles: ['admin','tecnico'], animation: 'addIventarioPAge', index: 8 }
+},
+  {
+  path: 'inventario/add/:id',
+  component: AddRespuestoComponent,
+  canActivate: [AuthGuard],
+  data: { roles: ['admin','tecnico'], animation: 'editInventarioPage', index: 8 }
+},
+
   { 
     path: 'cliente', 
     component: ClienteComponent, 

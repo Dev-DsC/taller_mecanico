@@ -1,46 +1,53 @@
-<!-- usuario.component.html -->
-<div class="mx-auto w-75 p-1">
-   <input
-  type="text"
-  class="form-control my-3"
-  placeholder="Buscar cliente por nombre"
-  (input)="onBuscar($event)"
->
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>#</th>
-        <th>Nombre</th>
-        <th>Email</th>
-        <th>Rol</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let item of usuarioFiltrados$ | async; let i = index">
-        <th scope="row">{{ i + 1 }}</th>
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.email }}</td>
-        <td>{{ item.rol }}</td>
-        <td class="d-flex">
-          <!-- Editar -->
-          <a
-            [routerLink]="['/usuario/edit', item.usuario_id]"
-            class="btn btn-outline-success p-1 d-flex align-items-center"
-          >
-            <span>Editar</span>
-            <i class="fa-solid fa-pen-to-square ms-1"></i>
-          </a>
-          <!-- Eliminar -->
-          <button
-            (click)="eliminar(item.usuario_id)"
-            class="btn btn-outline-danger ms-2 d-flex align-items-center"
-          >
-            <span>Eliminar</span>
-            <i class="fa-solid fa-trash-can ms-1"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+<div class="contenedor-inventario">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold">Gestión de Usuarios</h4>
+    <a class="btn btn-primary" [routerLink]="['/usuario/add']">
+      <i class="fa-solid fa-plus me-1"></i> Nuevo Usuario
+    </a>
+  </div>
+
+  <input
+    type="text"
+    class="form-control mb-4 shadow-sm"
+    placeholder="Buscar usuario por nombre..."
+    (input)="onBuscar($event)"
+  />
+
+  <div class="table-responsive shadow rounded-3">
+    <table class="table table-hover align-middle table-bordered table-striped tabla-inventario">
+      <thead class="table-dark">
+        <tr class="text-center">
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Rol</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of usuarioFiltrados$ | async; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.email }}</td>
+          <td>{{ item.rol }}</td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <a
+                [routerLink]="['/usuario/edit', item.usuario_id]"
+                class="btn btn-outline-success btn-sm"
+              >
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <button
+                (click)="eliminar(item.usuario_id)"
+                class="btn btn-outline-danger btn-sm"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

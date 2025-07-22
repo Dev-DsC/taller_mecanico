@@ -1,37 +1,32 @@
-<div class="container mt-5">
-  <h2 class="text-center mb-4 text-white">Ofrecemos Repuestos</h2>
- 
+<div class="container mt-5 servicios-container">
+  <h2 class="text-center servicios-titulo">Ofrecemos Repuestos</h2>
+
   <div class="container mt-4">
     <!-- Mensaje de carga -->
-    <div
-      *ngIf="inventarios.length === 0; else inventariosList"
-      class="text-center"
-    >
-      <p>Cargando inventario...</p>
+    <div *ngIf="inventarios.length === 0; else inventariosList" class="text-center text-white">
+      <p class="fs-5">Cargando inventario...</p>
+      <div class="spinner-border text-warning" role="status">
+        <span class="visually-hidden">Cargando...</span>
+      </div>
     </div>
 
     <!-- Lista de inventarios -->
     <ng-template #inventariosList>
-      <div class="row">
-        <!-- Card para cada item del inventario -->
-        <div class="col-md-4 mb-4" *ngFor="let item of inventarios">
-          <div class="card">
-            <!-- Imagen del item -->
-            <img
-              [src]="item.imagen"
-              class="card-img-top img-servicio"
-              [alt]="item.nombre"
-            />
-
-            <!-- Contenido de la card -->
-            <div class="card-body">
+      <div class="row g-4">
+        <div class="col-md-4" *ngFor="let item of inventarios">
+          <div class="card servicio-card h-100">
+            <div class="img-container">
+              <img [src]="item.imagen" class="img-servicio" [alt]="item.nombre" />
+            </div>
+            <div class="card-body d-flex flex-column">
               <h5 class="card-title">{{ item.nombre }}</h5>
               <p class="card-text">{{ item.descripcion }}</p>
-              <p class="card-text">
-                <small class="text-muted"
-                  >Precio: $ {{ item.costo_unitario }}</small
-                >
+              <p class="card-text fw-semibold fs-5">
+                Precio: <span class="text-warning">$ {{ item.costo_unitario }}</span>
               </p>
+              <button class="btn btn-warning mt-auto align-self-start shadow-sm">
+                Comprar
+              </button>
             </div>
           </div>
         </div>

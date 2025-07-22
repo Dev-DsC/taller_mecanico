@@ -1,0 +1,43 @@
+.acerca-container {
+  max-width: 800px;
+  color: #eee;
+  background: rgba(20, 20, 20, 0.85);
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+  margin-top: 3rem;
+}
+
+.titulo-acerca {
+  font-size: 2.8rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: #ffffff;
+ 
+}
+
+.descripcion-acerca {
+  font-size: 1.25rem;
+  line-height: 1.6;
+  margin-bottom: 1.3rem;
+  color: #ddd;
+}
+
+.imagen-container {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.imagen-acerca {
+  border: 3px solid #00bfff;
+  box-shadow: 0 8px 15px rgba(0, 191, 255, 0.4);
+  transition: transform 0.3s ease;
+  cursor: pointer;
+  max-width: 100%;
+}
+
+.imagen-acerca:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 20px rgba(0, 191, 255, 0.6);
+}

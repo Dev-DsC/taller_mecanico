@@ -1,0 +1,95 @@
+/* Contenedor principal */
+.servicios-container {
+  max-width: 1200px;
+  color: #fff;
+  padding-bottom: 3rem;
+}
+.servicios-titulo {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 900;
+  font-size: 3rem;
+  color: #ffffff; /* Amarillo del logo */
+  margin-bottom: 3rem;
+  letter-spacing: 1.4px;
+}
+
+
+/* Cards */
+.servicio-card {
+  background: #121212; /* Negro oscuro */
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(247, 198, 0, 0.3);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 2px solid transparent;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.servicio-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 10px 30px rgba(247, 198, 0, 0.7);
+  border-color: #f7c600;
+}
+
+/* Imágenes */
+
+
+.img-container {
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  overflow: hidden;
+  height: 180px;
+  width: 100%;
+}
+
+.img-servicio {
+  object-fit: cover;
+  height: 100%;
+  width: 100%;
+  transition: transform 0.4s ease;
+}
+
+.servicio-card:hover .img-servicio {
+  transform: scale(1.05);
+}
+
+
+/* Cuerpo de la card */
+.card-body {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+/* Título de cada servicio */
+.card-title {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: #f7c600;
+  margin-bottom: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  text-shadow: 0 0 8px #f7c600;
+}
+
+/* Texto de descripción */
+.card-text {
+  color: #ddd;
+  font-size: 1rem;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+/* Responsive tweaks */
+@media (max-width: 767px) {
+  .servicios-titulo {
+    font-size: 2.2rem;
+  }
+  .img-servicio {
+    height: 150px;
+  }
+}

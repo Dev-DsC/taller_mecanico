@@ -1,0 +1,33 @@
+
+.contacto-card:hover {
+  box-shadow: 0 0 20px rgba(0, 191, 255, 0.3);
+  transform: translateY(-3px);
+}
+.contacto-container {
+  padding-bottom: 50rem; /* Ajusta según quieras más arriba o más abajo */
+  
+}
+
+
+.enlace-contacto {
+  color: #00bfff;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+.enlace-contacto:hover {
+  color: #0090ff;
+  text-decoration: underline;
+}
+
+ul li i {
+  color: #00bfff;
+}
+
+hr {
+  opacity: 0.2;
+}
+
+h2 {
+  color: #ffffff;
+}

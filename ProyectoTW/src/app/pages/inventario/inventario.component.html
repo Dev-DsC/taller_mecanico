@@ -1,60 +1,54 @@
-<div class="mx-auto w-75 p-1">
-  <a
-    class="btn btn-warning m-2"
-    data-bs-toggle="modal"
-    data-bs-target="#respuesto"
-    >Nuevo</a
-  >
-  <div class="modal" id="respuesto">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content container-fluid modalClose">
-        <app-add-respuesto></app-add-respuesto>
-      </div>
-    </div>
+<div class="contenedor-inventario">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h4 class="fw-bold">Gestión de Inventario</h4>
+    <a class="btn btn-primary" [routerLink]="['/inventario/add']">
+      <i class="fa-solid fa-plus me-1"></i> Nuevo Repuesto
+    </a>
   </div>
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th scope="col">#</th>
-        <th scope="col">Nombre</th>
-        <th scope="col">Cantidad disponible</th>
-        <th scope="col">Cantidad_minima</th>
-        <th scope="col">Costo_unitario</th>
-        <th scope="col">Fecha_ingreso</th>
-        <th scope="col">Imagen</th>
-        <th scope="col">Descripcion</th>
-        <th scope="col">Acciones</th>
-      </tr>
-    </thead>
-    <tbody *ngFor="let item of inventarios, let i = index" >
-      <tr>
-        <th scope="row">{{i+1}}</th>
-        <td>{{ item.nombre }}</td>
-        <td>{{ item.cantidad_disponible }}</td>
-        <td>{{ item.cantidad_minima }}</td>
-        <td>{{ item.costo_unitario }}</td>
-        <td>{{ item.fecha_ingreso }}</td>
-        <td><img src="{{ item.imagen }}" alt="img" class="w-75" /></td>
-        <td>{{ item.descripcion }}</td>
 
-        <td class="d-flex">
-          <a
-            type="button"
-            [routerLink]="['/inventario/add', item.repuesto_id]"
-            class="btn btn-lg btn-outline-success d-flex justify-content-center align-items-center p-1"
-          >
-            <span> Editar</span>
-            <i class="fa-solid fa-pen-to-square" style="color: #04ae56"></i>
-          </a>
-          <button
-            type="button"
-            class="btn btn-lg btn-outline-danger d-flex justify-content-center align-items-center m-2" (click)="eliminar(item.repuesto_id)"
-          >
-            <span class="w-10"> Eliminar </span>
-            <i class="fa-solid fa-trash-can" style="color: #f50000"></i>
-          </button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive shadow rounded-3">
+    <table class="table table-hover align-middle table-bordered table-striped tabla-inventario">
+      <thead class="table-dark">
+        <tr class="text-center">
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Disponible</th>
+          <th>Mínima</th>
+          <th>Costo</th>
+          <th>Ingreso</th>
+          <th>Imagen</th>
+          <th>Descripción</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of inventarios; let i = index">
+          <th scope="row">{{ i + 1 }}</th>
+          <td>{{ item.nombre }}</td>
+          <td>{{ item.cantidad_disponible }}</td>
+          <td>{{ item.cantidad_minima }}</td>
+          <td>${{ item.costo_unitario }}</td>
+          <td>{{ item.fecha_ingreso }}</td>
+          <td>
+            <img [src]="item.imagen" alt="Imagen" class="img-thumbnail rounded" style="width: 80px; height: auto;" />
+          </td>
+          <td>{{ item.descripcion }}</td>
+          <td class="text-center">
+            <div class="btn-group" role="group">
+              <a [routerLink]="['/inventario/add', item.repuesto_id]" class="btn btn-outline-success btn-sm">
+                <i class="fa-solid fa-pen-to-square"></i>
+              </a>
+              <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                (click)="eliminar(item.repuesto_id)"
+              >
+                <i class="fa-solid fa-trash-can"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </div>

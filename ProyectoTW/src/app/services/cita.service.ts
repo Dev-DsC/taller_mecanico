@@ -20,10 +20,11 @@ interface CitasResponse {
   data: Cita[];
 }
 
-interface CitaResponse {
+export interface CitaResponse {
   ok: boolean;
   data: Cita;
 }
+
 
 @Injectable({
   providedIn: 'root'

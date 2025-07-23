@@ -2,10 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ServicioDetalleService } from '../../../services/servicio-detalle.service';
 import { servicios } from '../../../models/servicio.model';
-import { CitaService } from '../../../services/cita.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { CitaService, CitaResponse } from '../../../services/cita.service';
 import { UsuarioService } from '../../../services/usuario.service';
-import { Cita,CitaResponse } from '../../../services/cita.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-agendar-cita',
@@ -16,17 +15,16 @@ export class AgendarCitaComponent implements OnInit {
   citaForm!: FormGroup;
   clientes: any[] = [];
   servicios: servicios[] = [];
-  mensaje: string = '';
-  cargando: boolean = false;
-
-  hoyString: string = '';
+  cargando = false;
+  hoyString = '';
+  mensajeError = '';
 
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
-    private ServicioDetalleService: ServicioDetalleService,
+    private servicioDetalleService: ServicioDetalleService,
     private citaService: CitaService,
-    private snackBar: MatSnackBar
+    private toastr: ToastrService
   ) {}
 
   ngOnInit(): void {
@@ -48,18 +46,26 @@ export class AgendarCitaComponent implements OnInit {
   }
 
   cargarClientes() {
-    this.usuarioService.getUsuarios().subscribe(data => {
-      this.clientes = data.filter(u => u.rol === 'cliente');
-    }, error => {
-      console.error('Error cargando usuarios:', error);
+    this.usuarioService.getUsuarios().subscribe({
+      next: data => {
+        this.clientes = data.filter(u => u.rol === 'cliente');
+      },
+      error: err => {
+        console.error('Error cargando usuarios:', err);
+        this.toastr.error('No se pudieron cargar los clientes.', 'Error');
+      }
     });
   }
 
   cargarServicios() {
-    this.ServicioDetalleService.getServicioAll().subscribe(data => {
-      this.servicios = data;
-    }, error => {
-      console.error('Error cargando servicios:', error);
+    this.servicioDetalleService.getServicioAll().subscribe({
+      next: data => {
+        this.servicios = data;
+      },
+      error: err => {
+        console.error('Error cargando servicios:', err);
+        this.toastr.error('No se pudieron cargar los servicios.', 'Error');
+      }
     });
   }
 
@@ -71,56 +77,39 @@ export class AgendarCitaComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-guardarCita() {
-  if (this.citaForm.invalid) {
-    this.snackBar.open('Por favor, complete todos los campos requeridos.', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-error'
-    });
-    return;
-  }
-
-  const fechaSeleccionada = new Date(this.citaForm.value.fecha);
-  const hoy = new Date();
-  hoy.setHours(0, 0, 0, 0);
-
-  if (fechaSeleccionada < hoy) {
-    this.snackBar.open('No puedes agendar citas en fechas pasadas.', 'Cerrar', {
-      duration: 3000,
-      panelClass: 'snackbar-error'
-    });
-    return;
-  }
-
-  this.cargando = true;
-
-  const cita = { ...this.citaForm.value };
-  cita.fecha = this.formatearFecha(cita.fecha);
-
-  this.citaService.crearCitaYActualizar(cita).subscribe({
-    next: (resp: CitaResponse) => {
-      const nuevaCita = resp.data;
-
-      this.snackBar.open('Cita agendada exitosamente.', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snackbar-ok'
-      });
-
-      this.citaService.cargarCitas().subscribe(); // actualiza el BehaviorSubject
-
-      this.citaForm.reset();
-      this.cargando = false;
-    },
-    error: (error) => {
-      console.error(error);
-      this.snackBar.open('Error al agendar la cita.', 'Cerrar', {
-        duration: 3000,
-        panelClass: 'snackbar-error'
-      });
-      this.cargando = false;
+  guardarCita() {
+    if (this.citaForm.invalid) {
+      this.toastr.error('Por favor completa todos los campos obligatorios.', 'Formulario inválido');
+      return;
     }
-  });
-}
 
+    const fechaSeleccionada = new Date(this.citaForm.value.fecha);
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
+    if (fechaSeleccionada < hoy) {
+      this.toastr.warning('No puedes agendar citas en fechas pasadas.', 'Fecha inválida');
+      return;
+    }
+
+    this.cargando = true;
+
+    const cita = { ...this.citaForm.value };
+    cita.fecha = this.formatearFecha(cita.fecha);
+
+    this.citaService.crearCitaYActualizar(cita).subscribe({
+      next: (resp: CitaResponse) => {
+        this.toastr.success('Cita agendada exitosamente.', 'Éxito');
+        this.citaService.cargarCitas().subscribe(); // actualizar listado
+        this.citaForm.reset();
+        this.cargando = false;
+      },
+      error: (error) => {
+        console.error(error);
+        this.mensajeError = error.error?.mensaje || 'Error al agendar la cita.';
+        this.toastr.error(this.mensajeError, 'Error');
+        this.cargando = false;
+      }
+    });
+  }
 }

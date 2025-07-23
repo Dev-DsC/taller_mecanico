@@ -73,6 +73,12 @@ const routes: Routes = [
     canActivate: [AuthGuard],
     data: { roles: ['admin'], animation: 'UsuarioPage', index: 13 }
   },
+   {
+    path: 'usuario/add',
+    component: AddUsuarioComponent,
+    canActivate: [AuthGuard],
+    data: { roles: ['admin'], animation: 'editUsuarioPage', index: 13 }
+  },
   {
     path: 'usuario/edit/:id',
     component: AddUsuarioComponent,

@@ -55,6 +55,8 @@ import { CitasCalendarioComponent } from './pages/cita/citas-calendario/citas-ca
 import { CitasCalendarioClienteComponent } from './pages/cita/citas-calendario-cliente/citas-calendario-cliente.component';
 import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
 import { DetalleCitaDialogClienteComponent } from './pages/cita/citas-calendario-cliente/detalle-cita-dialog-cliente/detalle-cita-dialog-cliente.component';
+import { ToastrModule } from 'ngx-toastr';
+
 
 
 @NgModule({
@@ -88,11 +90,34 @@ import { DetalleCitaDialogClienteComponent } from './pages/cita/citas-calendario
     CitasCalendarioClienteComponent,
     VerificacionExitosaComponent,
     DetalleCitaDialogClienteComponent
+    
   ],
-  imports: [MatDialogModule,FullCalendarModule, BrowserModule, AppRoutingModule, ReactiveFormsModule, BrowserAnimationsModule, FormsModule, MatDatepickerModule,
-    MatNativeDateModule,
-    MatFormFieldModule,
-    MatInputModule, MatIconModule, CommonModule, MatSelectModule, MatDividerModule ],
+imports: [
+  BrowserModule,
+  BrowserAnimationsModule, // obligatorio para Toastr
+    ToastrModule.forRoot({
+      positionClass: 'toast-top-right',
+      timeOut: 3000,
+      progressBar: true,
+      progressAnimation: 'increasing',
+      closeButton: true,
+      preventDuplicates: true,
+    }),
+  MatDialogModule,
+  FullCalendarModule,
+  AppRoutingModule,
+  ReactiveFormsModule,
+  FormsModule,
+  MatDatepickerModule,
+  MatNativeDateModule,
+  MatFormFieldModule,
+  MatInputModule,
+  MatIconModule,
+  CommonModule,
+  MatSelectModule,
+  MatDividerModule,
+],
+
  providers: [
   provideClientHydration(),
   provideHttpClient(

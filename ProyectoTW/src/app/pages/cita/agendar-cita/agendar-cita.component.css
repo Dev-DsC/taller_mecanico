@@ -22,25 +22,24 @@
   margin-bottom: 20px;
 }
 
-/* Texto dentro de inputs y selects */
+/* Inputs y selects con texto claro */
 .mat-form-field-appearance-outline .mat-input-element,
 .mat-form-field-appearance-outline .mat-select-value-text {
-  color: #eee !important; /* texto claro dentro inputs */
+  color: #eee !important;
 }
 
-/* Placeholder texto */
+/* Placeholder */
 .mat-form-field-appearance-outline .mat-input-element::placeholder {
   color: #bbb !important;
   opacity: 1 !important;
 }
 
-/* Línea y borde de inputs */
+/* Bordes y líneas de inputs */
 .mat-form-field-appearance-outline .mat-form-field-outline {
-  color: #4fc3f7 !important;
   border-color: #4fc3f7 !important;
 }
 
-/* Focus en inputs */
+/* Focus */
 .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
   border-color: #82cfff !important;
 }
@@ -64,7 +63,7 @@
   text-transform: uppercase;
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-  background-color: #0288d1; /* azul */
+  background-color: #0288d1;
   color: #fff;
   transition: background-color 0.3s ease;
   cursor: pointer;
@@ -76,19 +75,27 @@
   color: #fff;
 }
 
-/* Deshabilitado */
 button:disabled {
   background-color: #555 !important;
   color: #999 !important;
   cursor: not-allowed;
 }
 
-::ng-deep .snackbar-error {
-  background-color: #e53935;
-  color: white;
+/* Estilos para los toasts ngx-toastr con fondo oscuro */
+.toast-top-right {
+  top: 20px !important;
+  right: 20px !important;
+  z-index: 15000 !important;
 }
 
-::ng-deep .snackbar-ok {
-  background-color: #43a047;
-  color: white;
+.toast {
+  opacity: 1 !important;
+  visibility: visible !important;
+  background-color: #222 !important;
+  color: #eee !important;
+  font-weight: 600 !important;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  padding: 12px 20px !important;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }

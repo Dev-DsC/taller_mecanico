@@ -1,20 +1,27 @@
 const nodemailer = require('nodemailer');
 
+// Las credenciales vienen del entorno (Backend/.env en local, variables de Render en producción).
+// Nunca se escriben aquí: el repositorio es público. Ver docs/plan/06-operacion.md
+const { EMAIL_USER, EMAIL_PASS } = process.env;
+const EMAIL_FROM = process.env.EMAIL_FROM || `"Taller Mecánico San Gabriel 🚗" <${EMAIL_USER}>`;
+
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'daltonsteve22@gmail.com', // tu correo real
-        pass: '***ELIMINADA***'      // tu contraseña de aplicación real
+        user: EMAIL_USER,
+        pass: EMAIL_PASS
     }
 });
 
 const enviarCorreoVerificacion = async (email, token) => {
+  if (!EMAIL_USER || !EMAIL_PASS) {
+    throw new Error('Faltan EMAIL_USER y EMAIL_PASS en el entorno: no se puede enviar el correo de verificación');
+  }
+
   const link = `https://taller-mecanico-t7lv.onrender.com/api/users/verificar-email/${token}`;
 
-
-
   await transporter.sendMail({
-    from: '"Taller Mecánico San Gabriel 🚗" <daltonsteve22@gmail.com>',
+    from: EMAIL_FROM,
     to: email,
     subject: 'Confirma tu correo',
     html: `

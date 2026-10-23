@@ -1,80 +1,93 @@
-# CodeViz Research Context
+# Taller Mecánico — notas para Claude
 
-> **Note**: This file contains research context from CodeViz. Most recent contexts are at the bottom.
+Sistema de gestión para un taller mecánico: web pública del taller, agenda de citas,
+clientes, inventario de repuestos, servicios contratados y facturas en PDF. Hoy lo usa
+un solo taller (**Taller Mecánico San Gabriel**, Ecuador) y el objetivo es
+**convertirlo en un producto comercializable** para otros talleres.
 
----
+- **Backend**: Node.js + Express 4 + PostgreSQL (`pg`), CommonJS → [`Backend/`](Backend/)
+- **Frontend**: Angular 18 con NgModules (no standalone), Bootstrap, Angular Material → [`ProyectoTW/`](ProyectoTW/)
+- **Producción**: API en Render, web en Vercel, base PostgreSQL externa → [`docs/plan/06-operacion.md`](docs/plan/06-operacion.md)
 
-## Research Query
+📖 **La documentación está en [`docs/plan/`](docs/plan/README.md), partida por temas.**
+Empieza por [`docs/plan/README.md`](docs/plan/README.md): es un índice que dice qué
+archivo abrir según lo que vayas a hacer. **No leas todo**, y no explores el repositorio
+antes de mirar [`docs/plan/01-estado.md`](docs/plan/01-estado.md), que tiene el mapa del
+código, los endpoints y los fallos conocidos con su `archivo:línea`.
 
-muestrame todo el flujo
+**Estado (2026-10-23):** Fase 0 cerrada en código (credenciales fuera del repo,
+documentación, historial de las ramas limpio). 🔴 **Pendiente del usuario**: revocar
+las dos contraseñas de aplicación de Gmail que estuvieron expuestas, poner
+`EMAIL_USER`/`EMAIL_PASS` en Render y pedir a GitHub que borre los PR #16–#20
+([`fase-00`](docs/plan/fases/fase-00-credenciales-y-documentacion.md)). La siguiente es la
+**Fase 1 — cerrar el API** ([`04-hoja-de-ruta.md`](docs/plan/04-hoja-de-ruta.md)).
 
-*Session: 05374a8794b0b7446bd43d8c3b4bd0e5 | Generated: 3/7/2025, 20:47:16*
+## 🔴 Lo que no se puede olvidar
 
-### Analysis Summary
+- **El repositorio es público** (`github.com/Dev-DsC/taller_mecanico`). Ningún secreto,
+  correo personal, contraseña ni cadena de conexión se escribe en el código: todo va en
+  `Backend/.env` (ignorado) y en las variables de Render. Plantilla: [`Backend/.env.example`](Backend/.env.example).
+- **El historial se reescribió el 2026-10-23** para quitar dos contraseñas. Nunca se hace
+  push desde un clon anterior a esa fecha, ni se restaura nada desde
+  `taller_mecanico-backups/`: devolvería las contraseñas a GitHub.
+- **El API no tiene autenticación real**: solo `/profileUser` pasa por `authMiddleware`, y
+  el frontend nunca envía el token. Los roles solo se comprueban en el `AuthGuard` de
+  Angular. Hasta que se cierre la Fase 1, **cualquier endpoint es público**. Ver
+  [`03-seguridad.md`](docs/plan/03-seguridad.md).
+- **El esquema de la base no está en el repositorio**: tablas, vistas, procedimientos
+  (`CALL insertar_cliente…`) y triggers viven solo en la base de producción. No inventes
+  columnas: lo que se sabe está en [`02-modelo-datos.md`](docs/plan/02-modelo-datos.md).
+- **El IVA está fijo al 12 % en tres sitios**; en Ecuador es 15 % desde el 2024-04-01, y la
+  "factura" no es un comprobante electrónico del SRI. Ver la Fase 6 de la hoja de ruta.
+- **Todas las rutas del API cuelgan de `/api/users`**, también clientes, inventario y
+  facturas (un solo router: `Backend/src/routes/user.router.js`).
+- `index.js` carga `dotenv` **antes** de `require('./app')`: `db.js` y `email.service.js`
+  leen `process.env` al importarse. No inviertas ese orden.
 
-# Flujo General de la Aplicación
+## Comandos
 
-La aplicación se compone de dos partes principales: un **Backend** desarrollado con Node.js (Express) y un **Frontend** desarrollado con Angular. Ambos interactúan para proporcionar la funcionalidad completa del taller mecánico.
+| Dónde | Comando | Qué hace |
+|---|---|---|
+| `Backend/` | `npm install` y `npm run dev` | API con nodemon en `:3000` (necesita `Backend/.env`) |
+| `Backend/` | `npm start` | API sin recarga (lo que ejecuta Render) |
+| `ProyectoTW/` | `npm install` y `npm start` | Angular en `:4200`, apunta a `http://localhost:3000` |
+| `ProyectoTW/` | `npm run build` | Build de producción a `dist/spa/` con `environment.prod.ts` (API de Render) |
+| `ProyectoTW/` | `npm test` | Karma + Jasmine (solo pruebas «should create» de plantilla) |
 
-## Arquitectura de Alto Nivel
+El backend no tiene pruebas ni linter. `node --check <archivo>` es la verificación mínima
+de sintaxis.
 
-La aplicación sigue una arquitectura cliente-servidor. El **Frontend** ([ProyectoTW/](ProyectoTW/)) es una aplicación web que se ejecuta en el navegador del usuario y consume los servicios expuestos por el **Backend** ([Backend/](Backend/)). La comunicación entre ambos se realiza a través de peticiones HTTP (RESTful API).
+## Cómo se trabaja aquí
 
-### Flujo de Datos General
+Las reglas de código (forma de las respuestas, controlador → modelo, nombres en español)
+están en [`docs/plan/05-convenciones.md`](docs/plan/05-convenciones.md). Las de proceso:
 
-1.  El usuario interactúa con la interfaz de usuario del **Frontend**.
-2.  El **Frontend** realiza peticiones HTTP al **Backend** para obtener o enviar datos.
-3.  El **Backend** procesa las peticiones, interactúa con la base de datos y devuelve una respuesta al **Frontend**.
-4.  El **Frontend** recibe la respuesta y actualiza la interfaz de usuario.
+1. **Diagnóstico y plan antes de cambiar.** Ante un fallo: causa con `archivo:línea` y
+   esperar aprobación. Ante una funcionalidad: preguntas de diseño y plan, luego código.
+   Cambiar solo lo necesario; lo demás que aparezca se anota en `01-estado.md`.
+2. **Antes de arreglar algo, comprobar que no esté ya resuelto** en el código actual y en
+   el historial reciente: producción puede ir por detrás de `main`.
+3. **Una rama por fase** (`fase-NN-nombre`), nunca trabajo directo en `main`. Commits
+   separados por efecto: lo que cambia comportamiento va solo. `git add` con rutas
+   explícitas. **No hacer `push` sin que lo pida el usuario.**
+4. **No imprimir secretos** al diagnosticar, aunque haya que leer `Backend/.env`: se
+   compara por longitud o por el inicio de su SHA-256.
+5. **Hablar siempre en español** con el usuario. Código, comandos y errores citados quedan
+   en su idioma original.
 
-## Backend (Node.js/Express)
+### 🔒 Regla de documentación — aplica a todo trabajo en este repositorio
 
-El **Backend** es responsable de la lógica de negocio, la gestión de la base de datos y la exposición de una API RESTful para el **Frontend**.
+**Al terminar una fase o un bloque de trabajo, se actualiza el archivo de esa fase en
+`docs/plan/fases/` y `docs/plan/01-estado.md`.** No se crea un documento nuevo por cada
+tarea ni se deja crecer uno sin límite. Existe porque quien retome esto llega sin
+contexto: un documento de 600 líneas no se lee, y se acaba explorando todo el código y
+repitiendo decisiones ya tomadas.
 
-### Componentes Principales del Backend
-
-*   **Punto de Entrada:** El servidor se inicia en [Backend/src/index.js](Backend/src/index.js), que a su vez importa y configura la aplicación Express desde [Backend/src/app.js](Backend/src/app.js).
-*   **Configuración de Base de Datos:** La conexión a la base de datos se gestiona en [Backend/src/config/connectionDB.js](Backend/src/config/connectionDB.js) y [Backend/src/config/db.js](Backend/src/config/db.js).
-*   **Aplicación Principal (Express):** [Backend/src/app.js](Backend/src/app.js) configura el middleware (como `express.json` para el parseo de JSON) y define las rutas de la API.
-*   **Rutas (Routes):** Definen los endpoints de la API y mapean las peticiones HTTP a las funciones de los controladores. Un ejemplo es [Backend/src/routes/user.router.js](Backend/src/routes/user.router.js), que maneja las operaciones relacionadas con los usuarios.
-*   **Controladores (Controllers):** Contienen la lógica de negocio para manejar las peticiones de cada ruta. Por ejemplo, [Backend/src/controllers/cliente.controller.js](Backend/src/controllers/cliente.controller.js) maneja las operaciones CRUD para los clientes, y [Backend/src/controllers/user.controller.js](Backend/src/controllers/user.controller.js) y [Backend/src/controllers/usuario.controller.js](Backend/src/controllers/usuario.controller.js) manejan la lógica de autenticación y gestión de usuarios.
-*   **Modelos (Models):** Definen la estructura de los datos y la interacción con la base de datos. Ejemplos incluyen [Backend/src/models/cliente.model.js](Backend/src/models/cliente.model.js), [Backend/src/models/factura.model.js](Backend/src/models/factura.model.js), y [Backend/src/models/user.model.js](Backend/src/models/user.model.js).
-*   **Middleware:** Funciones que se ejecutan antes de que las peticiones lleguen a los controladores. [Backend/src/middlewares/authMiddleware.js](Backend/src/middlewares/authMiddleware.js) es un ejemplo para la autenticación.
-
-### Flujo de Petición en el Backend (Ejemplo: Obtener Clientes)
-
-1.  Una petición HTTP (GET) llega a un endpoint como `/api/clientes`.
-2.  La ruta definida en el router (ej. `cliente.router.js`) intercepta la petición.
-3.  Si aplica, el middleware de autenticación ([Backend/src/middlewares/authMiddleware.js](Backend/src/middlewares/authMiddleware.js)) verifica el token del usuario.
-4.  La petición es pasada al controlador correspondiente, por ejemplo, `cliente.controller.js`.
-5.  La función del controlador ([Backend/src/controllers/cliente.controller.js](Backend/src/controllers/cliente.controller.js)) interactúa con el modelo de cliente ([Backend/src/models/cliente.model.js](Backend/src/models/cliente.model.js)) para consultar la base de datos.
-6.  El modelo ejecuta la consulta a la base de datos.
-7.  Los datos obtenidos son devueltos al controlador.
-8.  El controlador formatea la respuesta y la envía de vuelta al **Frontend**.
-
-## Frontend (Angular)
-
-El **Frontend** es la interfaz de usuario de la aplicación, construida con Angular. Permite a los usuarios interactuar con el sistema y visualizar la información.
-
-### Componentes Principales del Frontend
-
-*   **Punto de Entrada:** La aplicación Angular se inicia en [ProyectoTW/src/main.ts](ProyectoTW/src/main.ts), que arranca el módulo raíz de la aplicación.
-*   **Módulo Raíz:** [ProyectoTW/src/app/app.module.ts](ProyectoTW/src/app/app.module.ts) es el módulo principal que declara componentes, importa otros módulos y configura los proveedores de servicios.
-*   **Componente Raíz:** [ProyectoTW/src/app/app.component.ts](ProyectoTW/src/app/app.component.ts) es el componente principal que define la estructura base de la aplicación, con su plantilla en [ProyectoTW/src/app/app.component.html](ProyectoTW/src/app/app.component.html).
-*   **Enrutamiento (Routing):** [ProyectoTW/src/app/app-routing.module.ts](ProyectoTW/src/app/app-routing.module.ts) define las rutas de navegación de la aplicación, mapeando URLs a componentes específicos.
-*   **Autenticación:** El módulo [ProyectoTW/src/app/auth/](ProyectoTW/src/app/auth/) maneja el inicio de sesión y el registro. El servicio [ProyectoTW/src/app/auth/auth.service.ts](ProyectoTW/src/app/auth/auth.service.ts) se encarga de la comunicación con el backend para la autenticación.
-*   **Componentes de UI (Components):** El directorio [ProyectoTW/src/app/components/](ProyectoTW/src/app/components/) contiene componentes reutilizables de la interfaz de usuario, como [ProyectoTW/src/app/components/factura-form/factura-form.component.ts](ProyectoTW/src/app/components/factura-form/factura-form.component.ts) para la creación de facturas, y [ProyectoTW/src/app/components/shared/navbar/navbar.component.ts](ProyectoTW/src/app/components/shared/navbar/navbar.component.ts) para la barra de navegación.
-*   **Páginas (Pages):** El directorio [ProyectoTW/src/app/pages/](ProyectoTW/src/app/pages/) contiene los componentes que representan vistas completas de la aplicación, como [ProyectoTW/src/app/pages/cliente/cliente.component.ts](ProyectoTW/src/app/pages/cliente/cliente.component.ts) para la gestión de clientes, o [ProyectoTW/src/app/pages/inventario/inventario.component.ts](ProyectoTW/src/app/pages/inventario/inventario.component.ts) para el inventario.
-*   **Servicios (Services):** El directorio [ProyectoTW/src/app/services/](ProyectoTW/src/app/services/) contiene servicios que encapsulan la lógica para interactuar con el **Backend** API. Por ejemplo, [ProyectoTW/src/app/services/cliente.service.ts](ProyectoTW/src/app/services/cliente.service.ts) se encarga de las peticiones HTTP relacionadas con los clientes.
-*   **Modelos/Interfaces:** Los directorios [ProyectoTW/src/app/models/](ProyectoTW/src/app/models/) y [ProyectoTW/src/app/interface/](ProyectoTW/src/app/interface/) definen las estructuras de datos (interfaces y clases) utilizadas en el frontend, como [ProyectoTW/src/app/models/factura.model.ts](ProyectoTW/src/app/models/factura.model.ts) o [ProyectoTW/src/app/interface/loginResponse.ts](ProyectoTW/src/app/interface/loginResponse.ts).
-
-### Flujo de Interacción en el Frontend (Ejemplo: Mostrar Clientes)
-
-1.  El usuario navega a la ruta `/clientes` en el navegador.
-2.  El enrutador de Angular ([ProyectoTW/src/app/app-routing.module.ts](ProyectoTW/src/app/app-routing.module.ts)) carga el componente [ProyectoTW/src/app/pages/cliente/cliente.component.ts](ProyectoTW/src/app/pages/cliente/cliente.component.ts).
-3.  Dentro del componente `ClienteComponent`, se inyecta el servicio [ProyectoTW/src/app/services/cliente.service.ts](ProyectoTW/src/app/services/cliente.service.ts).
-4.  El `ClienteService` realiza una petición HTTP (GET) al endpoint `/api/clientes` del **Backend**.
-5.  Una vez que el **Frontend** recibe la respuesta del **Backend** (una lista de clientes), el `ClienteService` la devuelve al `ClienteComponent`.
-6.  El `ClienteComponent` actualiza su estado con los datos de los clientes.
-7.  La plantilla HTML del componente ([ProyectoTW/src/app/pages/cliente/cliente.component.html](ProyectoTW/src/app/pages/cliente/cliente.component.html)) se renderiza, mostrando la lista de clientes al usuario.
-
+1. **Un hecho vive en un solo archivo**; los demás enlazan.
+2. **Cada archivo de fase declara arriba qué leer antes.** Esa lista es el contrato.
+3. **Se escribe el *porqué*, no el *qué*.** Lo que hace el código se lee en el código.
+4. **Lo aprendido al implementar pesa más que lo planeado**: se anota en la fase donde
+   apareció y se enlaza desde la que lo va a sufrir.
+5. **Si un archivo pasa de ~250 líneas, se parte.**
+6. **Lo que deja de ser cierto se borra.** El historial está en git.
+7. Un fallo de `01-estado.md` que se arregla **se quita de esa lista** en el mismo commit.

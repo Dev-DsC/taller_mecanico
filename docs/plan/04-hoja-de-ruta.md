@@ -53,8 +53,9 @@ auditar las cuentas y ejecutar la migración 001, con permiso del usuario.
 - Factura en **una transacción** y número de factura con **secuencia** de PostgreSQL.
 - Validación de entrada en el servidor (un esquema por ruta).
 - Respuestas uniformes `{ ok, data | msg }` en todas las rutas.
-- Dependencias de Angular alineadas (Material/CDK 18), fuera `nodemailer` del frontend y
-  `bcryptjs` del backend; `dist/` fuera de git.
+- Dependencias de Angular alineadas (Material/CDK 18) y, con eso, fuera `ProyectoTW/.npmrc`
+  (`legacy-peer-deps`, puesto en el PR #22 para que Vercel pudiera instalar). Fuera
+  `nodemailer` del frontend y `bcryptjs` del backend; `dist/` fuera de git.
 
 **Hecho cuando**: la lista de fallos de `01-estado.md` está vacía o cada uno remanente
 tiene su motivo escrito.

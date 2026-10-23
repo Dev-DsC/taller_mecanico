@@ -35,8 +35,9 @@ código, los endpoints y los fallos conocidos con su `archivo:línea`.
 - **El historial se reescribió el 2026-10-23** para quitar dos contraseñas. Nunca se hace
   push desde un clon anterior a esa fecha, ni se restaura nada desde
   `taller_mecanico-backups/`: devolvería las contraseñas a GitHub.
-- **La web de producción está congelada desde 2025-07-22** (`b190268`): en Vercel la
-  instalación falla con `ERESOLVE` y además los despliegues salen bloqueados. Un PR en verde
+- **La web de producción está congelada desde 2025-07-22** (`b190268`): en Vercel los
+  despliegues salen bloqueados, y la instalación fallaba con `ERESOLVE` (se arregla con
+  `ProyectoTW/.npmrc`, que entra con el PR #22). Un PR en verde
   no significa que se haya publicado: hay que mirar que el despliegue quede `READY` en Vercel
   ([`06-operacion.md`](docs/plan/06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)).
 - **Toda ruta del API declara su acceso** en `Backend/src/routes/user.router.js`
@@ -71,7 +72,7 @@ código, los endpoints y los fallos conocidos con su `archivo:línea`.
 | `Backend/` | `npm install` y `npm run dev` | API con nodemon en `:3000` (sin `Backend/.env` arranca igual, sin base) |
 | `Backend/` | `npm test` | Jest + supertest con la base simulada: accesos, login, cuentas, citas, SQL |
 | `Backend/` | `npm start` | API sin recarga (lo que ejecuta Render) |
-| `ProyectoTW/` | `npm ci --legacy-peer-deps` y `npm start` | Angular en `:4200`, apunta a `http://localhost:3000` |
+| `ProyectoTW/` | `npm ci` y `npm start` | Angular en `:4200`, apunta a `http://localhost:3000` (`.npmrc` pone `legacy-peer-deps` hasta la Fase 2) |
 | `ProyectoTW/` | `npx ng build --output-path ../../build-tmp` | Build de verificación **fuera del repo** (`dist/` está versionado; no ensuciarlo) |
 | `ProyectoTW/` | `npm test` | Karma + Jasmine: hoy **no compila** (`auth.guard.spec.ts`), Fase 2 |
 

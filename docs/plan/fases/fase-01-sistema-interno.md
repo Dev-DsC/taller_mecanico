@@ -78,7 +78,7 @@ previa `.revisar.sql`.
 ## Despliegue — 🔴 en este orden, y la base solo con permiso del usuario
 
 0. **Que Vercel pueda desplegar.** Hoy no puede: la web de producción está congelada en
-   `b190268` (2025-07-22) porque la instalación falla con `ERESOLVE` y además Vercel bloquea
+   `b190268` (2025-07-22) porque la instalación fallaba con `ERESOLVE` (lo arregla el `.npmrc` de este PR) y Vercel bloquea
    todos los despliegues ([`06-operacion.md`](../06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)).
    Si se fusiona antes, Render despliega el API nuevo y la web vieja, que no manda token,
    recibe 401 en todo: **el panel deja de funcionar**. El PR #22 no se fusiona hasta que un
@@ -118,7 +118,7 @@ visto bueno del usuario.
 - **Fase 2:**
   - el personal no puede cambiar su propia contraseña, solo el admin ponérsela;
   - `/usuario` lista también las cuentas `cliente` antiguas;
-  - la instalación del frontend necesita `npm ci --legacy-peer-deps` (Material 17 con Angular 18).
+  - la instalación del frontend depende de `ProyectoTW/.npmrc` (`legacy-peer-deps`) por Material 17 con Angular 18; al alinearlos, se quita.
 - **Fase 3:** esta es la primera migración versionada, y `Backend/db/migraciones/` es la
   carpeta. Al montar la herramienta de migraciones hay que contarla como ya aplicada.
 - **Fase 7:** la solicitud de cita sin cuenta y los enlaces únicos (presupuesto, estado del

@@ -133,7 +133,7 @@ Cuando se arregle uno, **se borra de aquí** en el mismo commit.
 | `ProyectoTW/src/app/services/factura.service.ts:17` | `POST /facturas` no existe. Lo usa `FacturaFormComponent`, que no está en ninguna plantilla |
 | `ProyectoTW/src/app/components/shared/navbar/navbar.component.html:118` | El botón «Iniciar sesión» lleva `routerLink="/login"`, que no existe: además de abrir el modal, navega a `/servicios` |
 | IVA 12 %: `factura-form.component.ts:23,117`, `helpers/factura-html.helper.ts:59` | Y en el backend `factura.controller.js:37`. Ecuador: 15 % desde 2024-04-01 |
-| `ProyectoTW/package.json` | `@angular/material` y `@angular/cdk` en 17 con el core en 18: `npm ci` necesita `--legacy-peer-deps`, y **en Vercel la instalación falla desde 2025-07-23** ([`06-operacion.md`](06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)). `nodemailer` instalado sin uso |
+| `ProyectoTW/package.json` | `@angular/material` y `@angular/cdk` en 17 con el core en 18: `ProyectoTW/.npmrc` pone `legacy-peer-deps` para poder instalar (en Vercel la instalación fallaba desde 2025-07-23) ([`06-operacion.md`](06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)). `nodemailer` instalado sin uso |
 | `ProyectoTW/.gitignore:4` | `#/dist` comentado: cada build se sube a git |
 | `ng build` | Aviso (no error): el bundle inicial pasa 143 kB del presupuesto de 2 MB |
 | Pruebas | 26 `it`, todos los «should create» de la CLI. `auth.guard.spec.ts` importa `authGuard`, que no existe: **`npm test` no compila** |

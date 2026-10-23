@@ -45,10 +45,11 @@ cd Backend && npm install && npm run dev
 ```
 
 ```bash
-cd ProyectoTW && npm ci --legacy-peer-deps && npm start
+cd ProyectoTW && npm ci && npm start
 ```
 
-`--legacy-peer-deps` hace falta por Material 17 con Angular 18 (Fase 2). La web queda en
+`ProyectoTW/.npmrc` lleva `legacy-peer-deps=true` por Material 17 con Angular 18; sin él la
+instalación falla con `ERESOLVE`. Se quita al alinearlos en la Fase 2. La web queda en
 `http://localhost:4200` contra el API en `http://localhost:3000` (`environment.ts`).
 `localhost:4200` ya está en los orígenes de CORS. Para la vista previa de Claude están las
 dos en `.claude/launch.json` (`api` y `web`).
@@ -101,15 +102,17 @@ salió, `b190268`** («arreglar behavior en citas calendario», 2025-07-22). Nad
 ha publicado, por dos motivos que se suman:
 
 1. **La instalación falla desde 2025-07-23** (`c60d5d8`, `BUILD_UTILS_SPAWN_1`): `npm install`
-   da `ERESOLVE` por `@angular/material@17` con `@angular/core@18`. En local se instala con
-   `--legacy-peer-deps`; Vercel no lo usa.
+   da `ERESOLVE` por `@angular/material@17` con `@angular/core@18`. ✅ Arreglado con
+   `ProyectoTW/.npmrc` (`legacy-peer-deps=true`) en el PR #22: en una carpeta limpia, sin
+   el archivo da `ERESOLVE` y con él resuelve. Llega a Vercel cuando se fusione ese PR, y
+   solo se ha comprobado en local, porque el bloqueo del punto 2 impide probarlo allí.
 2. **Desde 2026-10 Vercel bloquea todos los despliegues** con «Deployment was blocked»
    (`readyState: BLOCKED`, sin motivo en el API), incluidos commits sin coautor como `a65d99c`.
    Coincide con el cambio de nombre de la cuenta de GitHub: los despliegues de 2025 dicen
    `githubOrg: Developer-DsC` y los de ahora `Dev-DsC`. El motivo exacto se ve en el panel
    de Vercel, en el despliegue bloqueado.
 
-Hasta que los dos estén resueltos, **ningún cambio del frontend llega a producción**, y uno
+Hasta que el bloqueo esté resuelto, **ningún cambio del frontend llega a producción**, y uno
 del backend que cambie el contrato deja la web vieja sin funcionar. Comprobar siempre en
 Vercel que el despliegue de producción quedó `READY`, no basta con que el PR esté verde.
 

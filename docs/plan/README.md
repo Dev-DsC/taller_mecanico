@@ -10,14 +10,15 @@ vayas a hacer, y nada más. Las reglas para mantener estos documentos están en
 | Si vas a… | Lee | Y ten presente |
 |---|---|---|
 | Retomar el trabajo sin contexto | [`01-estado.md`](01-estado.md) | Mapa del código, endpoints, pantallas y la lista de fallos conocidos con `archivo:línea` |
-| Elegir o empezar la siguiente fase | [`04-hoja-de-ruta.md`](04-hoja-de-ruta.md) | Las fases para comercializar, su orden y su criterio de «hecho». 🔴 La Fase 1 (cerrar el API) va antes que cualquier funcionalidad |
-| Entender qué es el producto y para quién | [`00-contexto.md`](00-contexto.md) | El cliente actual, el objetivo comercial y las decisiones que todavía no se han tomado |
-| Tocar la base de datos, un modelo o una consulta | [`02-modelo-datos.md`](02-modelo-datos.md) | 🔴 El esquema **no está versionado**: tablas, vistas, procedimientos y triggers viven solo en la base de producción |
-| Tocar login, registro, roles, tokens o permisos | [`03-seguridad.md`](03-seguridad.md) | 🔴 El API no exige token en casi ninguna ruta y el registro acepta `rol` del cliente |
+| Elegir o empezar la siguiente fase | [`04-hoja-de-ruta.md`](04-hoja-de-ruta.md) | Las fases para comercializar, su orden y su criterio de «hecho». La Fase 1 está escrita pero **sin desplegar** |
+| Entender qué es el producto y para quién | [`00-contexto.md`](00-contexto.md) | 🔒 **Sistema interno: el cliente no tiene cuenta.** Decisiones tomadas y abiertas |
+| Tocar la base de datos, un modelo o una consulta | [`02-modelo-datos.md`](02-modelo-datos.md) | 🔴 El esquema **no está versionado**, solo los cambios en `Backend/db/migraciones/`, que se ejecutan **con permiso del usuario** |
+| Tocar login, cuentas, roles, tokens o una ruta nueva | [`03-seguridad.md`](03-seguridad.md) + [`fases/fase-01-sistema-interno.md`](fases/fase-01-sistema-interno.md) | 🔒 Toda ruta declara su acceso en el router y `test/accesos.test.js` lo comprueba. 🔒 El rol sale de `req.user` (releído de la base). Solo el admin crea cuentas |
+| Tocar citas o la agenda | [`fases/fase-01-sistema-interno.md`](fases/fase-01-sistema-interno.md) + [`02-modelo-datos.md`](02-modelo-datos.md#tablas) | 🔒 La cita es de una **ficha de cliente** (`cliente_id`); `usuario_id` es heredado |
 | Tocar facturas, el IVA o el PDF | [`02-modelo-datos.md`](02-modelo-datos.md#facturación) + Fase 6 de [`04-hoja-de-ruta.md`](04-hoja-de-ruta.md#fase-6--facturación-con-validez-en-ecuador) | 🔴 IVA fijo al 12 % en tres sitios; Ecuador cobra 15 % desde 2024-04-01. No es un comprobante del SRI |
 | Escribir código en este repositorio | [`05-convenciones.md`](05-convenciones.md) | Forma de las respuestas `{ ok, data, msg }`, controlador → modelo, nombres en español |
-| Levantarlo en local, desplegar o tocar variables de entorno | [`06-operacion.md`](06-operacion.md) | `dotenv` se carga antes que la app. Las credenciales se rotan desde ahí |
-| Tocar el envío de correos o las credenciales | [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md) | 🔴 Dos contraseñas de aplicación de Gmail estuvieron en el historial público (ya limpiado): revocadas o no, nunca vuelven al código. 🔴 Nadie hace push desde un clon anterior al 2026-10-23 |
+| Levantarlo en local, probar, desplegar o tocar variables de entorno | [`06-operacion.md`](06-operacion.md) | `npm test` en `Backend/`. El build del frontend va fuera del repo. `dotenv` se carga antes que la app |
+| Tocar credenciales | [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md) | 🔴 Dos contraseñas de aplicación de Gmail estuvieron en el historial público (ya limpiado): revocadas o no, nunca vuelven al código. 🔴 Nadie hace push desde un clon anterior al 2026-10-23. Desde la Fase 1 el sistema no envía correo |
 
 ## Archivos
 

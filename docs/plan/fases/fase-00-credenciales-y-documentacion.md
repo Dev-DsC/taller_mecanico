@@ -81,9 +81,9 @@ Lo que la limpieza **no** alcanza, porque solo GitHub puede borrarlo:
    Limpiar el historial no las invalida: pasaron más de un año en el historial de un
    repositorio que hoy es público, y siguen en las copias de GitHub de los PR #16–#20 y en
    cualquier clon o fork.
-2. Crear una nueva y ponerla en Render como `EMAIL_PASS`, con `EMAIL_USER` = la cuenta.
-   **Hasta entonces el registro de clientes falla** en cuanto se despliegue esta rama (y
-   también fallará en `main` en cuanto se revoque la vieja).
+2. ~~Crear una nueva para Render~~: desde la [Fase 1](fase-01-sistema-interno.md) el sistema
+   no envía correo y no hace falta. Hasta que la Fase 1 se despliegue, revocar la vieja deja
+   sin funcionar el registro público, que de todos modos se retira.
 3. Revisar en la cuenta de Google la actividad reciente y los dispositivos.
 4. Pedir a GitHub que borre los PR #16–#20 y los commits viejos (ver arriba).
 5. Avisar a quien tenga un clon de que lo borre y vuelva a clonar.
@@ -96,12 +96,9 @@ Lo que la limpieza **no** alcanza, porque solo GitHub puede borrarlo:
   público como autor de 55 commits.
 - **Las URLs de Render y Vercel siguen escritas a mano**: no son secretos, y cambiarlas a
   variables va en la Fase 4 junto con el resto de la marca blanca.
-- **El nombre del taller queda como remitente por defecto** para no cambiar lo que ve el
-  cliente actual.
-
 ## Para la fase que lo sufra
 
-- Fase 1: el error de correo del registro sigue dejando al usuario creado y sin forma de
-  pedir otro enlace desde la web (`usuario.controller.js:39`, ya en `01-estado.md`).
-- Fase 4: si se cambia Gmail por un proveedor transaccional, `EMAIL_PASS` pasa a ser una
-  API key y `EMAIL_FROM` tendrá que ser de un dominio verificado.
+- Fase 1 (resuelto allí): el registro y su correo de verificación se retiraron por completo,
+  y con ellos `email.service.js` y las variables `EMAIL_*`.
+- Fase 7: los avisos al cliente necesitarán un proveedor de correo o de WhatsApp. Su clave va
+  en el entorno desde el primer commit, nunca en el código.

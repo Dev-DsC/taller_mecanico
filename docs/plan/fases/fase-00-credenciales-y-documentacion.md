@@ -18,6 +18,9 @@ En el historial hay **dos distintas**:
 | La primera | `73da14c`, `30d466b` | 2025-07-17 |
 | La segunda | `383c361` y siguientes hasta `c60d5d8` | 2025-07-19 |
 
+Ni siquiera un prefijo de cada una se escribe aquí: Google las lista por el nombre que se
+les dio al crearlas, no por su valor, así que para revocarlas no hace falta.
+
 ## Qué se hizo
 
 - `Backend/src/services/email.service.js`: usuario, contraseña y remitente salen de

@@ -1,8 +1,14 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const routerUsers = require('./routes/user.router');
 
 const app = express();
+
+// Render pone un proxy delante: sin esto, el límite de intentos del login contaría la IP
+// del proxy y no la del cliente
+app.set('trust proxy', 1);
+app.use(helmet());
 
 // Manejar promesas no controladas para evitar que se caiga el backend
 process.on('unhandledRejection', (reason, promise) => {
@@ -24,11 +30,11 @@ app.use(cors(corsOptions));
 
 
 // Middleware para recibir JSON y formularios
-// ¡¡¡CAMBIO AQUÍ: AUMENTA EL LÍMITE DE TAMAÑO DEL CUERPO DE LA PETICIÓN!!!
-// '50mb' es un buen punto de partida, ajusta según el tamaño máximo esperado de tus imágenes.
-// Puedes usar '10mb', '20mb', '100mb' etc., pero 50mb suele ser suficiente para la mayoría de las imágenes web.
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true })); // También importante para formularios grandes
+// La foto de un repuesto viaja en base64 dentro del JSON; ninguna otra ruta necesita más
+// de 100 kB. Este parser va primero, así que el general ya no vuelve a leer ese cuerpo.
+app.use('/api/users/inventario', express.json({ limit: '10mb' }));
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ limit: '100kb', extended: true }));
 
 // Middleware para capturar errores generales
 app.use((err, req, res, next) => {

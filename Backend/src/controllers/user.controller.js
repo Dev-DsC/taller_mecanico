@@ -1,100 +1,62 @@
 const UserModel = require("./../models/user.model");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const db = require('../config/db');
 const UsuarioModel = require('../models/usuario.model');
-const { enviarCorreoVerificacion } = require('../services/email.service');
+const { ROLES_PERSONAL } = require('../config/roles');
 
-
-const enviarVerificacionEmail = async (req, res) => {
- 
-
-    const { email } = req.body;
-    const usuario = await UsuarioModel.findOneUserEmail(email);
-    if (!usuario) return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
-
-    const token = jwt.sign(
-        { email: usuario.email },
-        process.env.JWT_SECRET,
-        { expiresIn: '1d' }
-    );
-
-    await enviarCorreoVerificacion(usuario.email, token);
-    res.json({ ok: true, msg: 'Correo de verificación enviado' });
-};
-
-const verificarEmail = async (req, res) => {
-    try {
-        const { token } = req.params;
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const email = decoded.email;
-
-        const usuario = await UsuarioModel.findOneUserEmail(email);
-        if (!usuario) return res.status(404).json({ ok: false, msg: 'Usuario no encontrado' });
-
-        const query = {
-            text: `UPDATE public.usuarios SET email_verificado = TRUE WHERE email = $1`,
-            values: [email],
-        };
-        await db.query(query);
-
-       res.redirect('https://taller-mecanico-52bo.vercel.app/verificado');
-
-    } catch (err) {
-        res.status(400).json({ ok: false, msg: 'Token inválido o expirado' });
-    }
-};
+// Si el correo no existe se compara igual contra este hash, para que el tiempo de
+// respuesta no delate qué correos tienen cuenta
+const HASH_DE_RELLENO = bcrypt.hashSync('correo-sin-cuenta', 10);
 
 
 const login = async (req, res) => {
   try {
-   
+
     const { email, password_hash } = req.body;
 
     if (!email || !password_hash) {
-     
+
       return res.status(400).json({
         ok: false,
         msg: "Required fields: email and password",
       });
     }
 
-   
+
     const foundUser = await UserModel.findOneUserEmail(email);
-    
 
-    if (!foundUser) {
-      
-      return res.status(401).json({ ok: false, msg: "Email not found" });
-    }
-
-    if (!foundUser.email_verificado) {
-     
-      return res.status(403).json({ ok: false, msg: "Debe verificar su correo primero" });
-    }
-
-   
+    // Correo inexistente y contraseña errónea dan la misma respuesta
     const matchPassword = await bcrypt.compare(
-      password_hash,
-      foundUser.password_hash
+      String(password_hash),
+      foundUser ? foundUser.password_hash : HASH_DE_RELLENO
     );
-   
 
-    if (!matchPassword) {
-      
+    if (!foundUser || !matchPassword) {
+
       return res.status(401).json({ ok: false, msg: "Invalid credentials" });
 
     }
-    
 
-   
+    if (!ROLES_PERSONAL.includes(foundUser.rol)) {
+      return res.status(403).json({ ok: false, msg: "Acceso solo para el personal del taller" });
+    }
+
+    // Cuentas antiguas que nunca se verificaron: ya no hay correo de verificación, así que
+    // las activa el administrador (docs/plan/fases/fase-01-sistema-interno.md)
+    if (!foundUser.email_verificado) {
+
+      return res.status(403).json({ ok: false, msg: "Cuenta no activada" });
+    }
+
+
+
     const token = jwt.sign(
       { userId: foundUser.usuario_id, rol: foundUser.rol },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    
+
     return res.json({ ok: true, token });
 
   } catch (error) {
@@ -109,14 +71,12 @@ const login = async (req, res) => {
 
 const profileUser = async (req, res) => {
   try {
-    const { email } = req.body;
-
-    const foundUser = await UserModel.findOneUserEmail(email);
+    const foundUser = await UsuarioModel.findUserById(req.user.userId);
     if (!foundUser) {
       return res.status(404).json({ ok: false, msg: "User not found" });
     }
 
-    return res.json({ ok: true, msg: foundUser });
+    return res.json({ ok: true, data: foundUser });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -128,9 +88,7 @@ const profileUser = async (req, res) => {
 
 const UserController = {
   login,
-  profileUser,
-  enviarVerificacionEmail,
-  verificarEmail
+  profileUser
 };
 
 module.exports = UserController;

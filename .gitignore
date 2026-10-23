@@ -1,0 +1,6 @@
+# Secretos: ningún .env se versiona, solo las plantillas .env.example
+.env
+.env.*
+!.env.example
+
+node_modules/

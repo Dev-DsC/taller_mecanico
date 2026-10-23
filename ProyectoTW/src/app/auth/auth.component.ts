@@ -32,7 +32,8 @@ errorMessage: string = ''; // <--- propiedad para mostrar error en pantalla
     this.authService.signIn(this.loginForm.value).subscribe({
       next: (data) => {
         this.alertService.login(); // mensaje éxito (toast u otro)
-        this.router.navigate(['/servicio']).then(() => {
+        // Solo entra el personal: después del login, al panel
+        this.router.navigate(['/cita/agendar']).then(() => {
           window.location.reload();
         });
       },
@@ -42,17 +43,20 @@ errorMessage: string = ''; // <--- propiedad para mostrar error en pantalla
         const backendMsg = errorData.error?.msg;
 
         switch(backendMsg) {
-          case 'Email not found':
-            this.errorMessage = 'Correo no encontrado';
-            break;
-          case 'Debe verificar su correo primero':
-            this.errorMessage = 'Debe verificar su correo antes de ingresar';
-            break;
           case 'Invalid credentials':
-            this.errorMessage = 'Credenciales inválidas';
+            this.errorMessage = 'Correo o contraseña incorrectos';
+            break;
+          case 'Acceso solo para el personal del taller':
+            this.errorMessage = 'Este acceso es solo para el personal del taller. Para pedir una cita, escríbenos por WhatsApp.';
+            break;
+          case 'Cuenta no activada':
+            this.errorMessage = 'Tu cuenta no está activada. Pide al administrador que la revise.';
             break;
           default:
-            this.errorMessage = 'Error desconocido. Intenta de nuevo.';
+            // 429: el backend ya explica que hay que esperar
+            this.errorMessage = errorData.status === 429 && backendMsg
+              ? backendMsg
+              : 'Error desconocido. Intenta de nuevo.';
             break;
         }
       }

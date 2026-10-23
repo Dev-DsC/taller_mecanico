@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Register } from '../models/register.model';
 import { Observable, tap } from 'rxjs';
 import { Login } from '../models/login.model';
 import { LoginResponse } from '../interface/loginResponse';
@@ -22,10 +21,7 @@ export class AuthService {
     private cokkieService: CookieService
   ) {this.setUserRoleFromToken();}
 
- signUp(usuario: any): Observable<any> {
-  return this.httpClient.post(`${this.API_URL}/usuarios/crear`, usuario);
-}
-
+  // No hay registro público: las cuentas son del personal y las crea el admin en /usuario/add
 
   signIn(login: Login): Observable<LoginResponse> {
     return this.httpClient
@@ -56,8 +52,15 @@ export class AuthService {
 
 
 
+  // Dura lo mismo que el JWT (1 h). Secure solo en https, para que localhost siga funcionando.
   setTokenCookie(token: string) {
-    this.cokkieService.set('token', token);
+    const enHttps = typeof location !== 'undefined' && location.protocol === 'https:';
+    this.cokkieService.set('token', token, {
+      expires: 1 / 24,
+      path: '/',
+      sameSite: 'Strict',
+      secure: enHttps,
+    });
   }
 
   getTokenCookie() {
@@ -65,7 +68,8 @@ export class AuthService {
   }
 
   deleteTokenCookie(){
-    this.cokkieService.deleteAll();
+    this.cokkieService.delete('token', '/');
+    this.cokkieService.deleteAll(); // las cookies de antes se guardaban sin path
     this.clearUserRole();
   }
  clearUserRole() {

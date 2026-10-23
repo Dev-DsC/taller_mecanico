@@ -30,11 +30,17 @@ export class AddUsuarioComponent implements OnInit {
       nombre: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
       rol: ['', [Validators.required]],
+      // Obligatoria al crear; al editar, solo si el admin la restablece (no hay recuperación por correo)
+      password_hash: ['', [Validators.minLength(8)]],
     });
   }
 
   ngOnInit(): void {
     this.id = this.route.snapshot.paramMap.get('id');
+
+    if (!this.id) {
+      this.usuarioForm.get('password_hash')?.addValidators(Validators.required);
+    }
 
     if (this.id) {
       this.title = 'Actualizar usuario';
@@ -65,7 +71,11 @@ export class AddUsuarioComponent implements OnInit {
   }
 
   create() {
-    
+    if (this.usuarioForm.invalid) {
+      this.alertService.errorCreate();
+      return;
+    }
+
     if (this.nameButtom === 'Nuevo') {
       this.usuarioService.insertarUsuario(this.usuarioForm.value).subscribe({
         next: (data) => {
@@ -81,7 +91,10 @@ export class AddUsuarioComponent implements OnInit {
         },
       });
     } else {
-      this.usuarioService.updateUsuario(Number(this.id), this.usuarioForm.value).subscribe({
+      // Sin contraseña nueva no se manda el campo, y el backend deja la actual
+      const { password_hash, ...datos } = this.usuarioForm.value;
+      const usuario = password_hash ? this.usuarioForm.value : datos;
+      this.usuarioService.updateUsuario(Number(this.id), usuario).subscribe({
         next: (data) => {
          
         },

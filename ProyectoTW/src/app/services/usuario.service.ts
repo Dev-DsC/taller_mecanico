@@ -28,7 +28,7 @@ export class UsuarioService {
 
   // Insertar un nuevo usuario
   insertarUsuario(usuario: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}/crear`, usuario);
+    return this.http.post(`${this.apiUrl}/usuarios/crear`, usuario);
   }
 
   // Obtener un usuario por ID

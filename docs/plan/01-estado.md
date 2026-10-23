@@ -2,7 +2,7 @@
 
 > **Lee antes:** [`00-contexto.md`](00-contexto.md) si no sabes qué es el producto.
 > Medido contra el código el **2026-10-23** (rama `fase-00-credenciales-y-documentacion`,
-> partiendo de `main` = `c60d5d8`). Si cambias algo de lo que aquí se describe, actualiza
+> partiendo de `main` = `a65d99c`, que era `c60d5d8` antes de limpiar el historial). Si cambias algo de lo que aquí se describe, actualiza
 > este archivo en el mismo commit.
 
 ## Estructura

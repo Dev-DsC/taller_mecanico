@@ -1,7 +1,7 @@
 # 03 — Seguridad
 
 > **Lee antes:** [`01-estado.md`](01-estado.md#endpoints) (qué rutas existen).
-> Auditoría del **2026-10-23** sobre `c60d5d8`. Cuando se corrija un hallazgo, **se marca
+> Auditoría del **2026-10-23** sobre `c60d5d8` (tras la limpieza del historial, `a65d99c`). Cuando se corrija un hallazgo, **se marca
 > ✅ con la fase y el commit**, y a la siguiente revisión se borra.
 
 ## Resumen
@@ -15,7 +15,7 @@ modificar o borrar clientes, usuarios, citas, inventario y facturas, o darse de 
 
 | # | Hallazgo | Dónde | Corrección |
 |---|---|---|---|
-| C1 | **Dos contraseñas de aplicación de Gmail** de la cuenta personal del usuario, en el historial de un repositorio **público** desde 2025-07-17 | Commits `73da14c`, `30d466b` (una) y `383c361` (otra), `Backend/src/services/email.service.js` | ✅ Fuera del código en la Fase 0. 🔴 **Falta revocarlas** en Google: mientras no se revoquen, funcionan. Ver [`fase-00`](fases/fase-00-credenciales-y-documentacion.md) |
+| C1 | **Dos contraseñas de aplicación de Gmail** de la cuenta personal del usuario, en el historial de un repositorio **público** desde 2025-07-17 | `Backend/src/services/email.service.js` (commits en [`fase-00`](fases/fase-00-credenciales-y-documentacion.md)) | ✅ Fuera del código y del historial de las ramas en la Fase 0. 🔴 **Falta revocarlas** en Google y pedir a GitHub que borre los PR #16–#20: mientras no se revoquen, funcionan |
 | C2 | **Rutas sin autenticación**: solo `/profileUser` usa `authMiddleware` | `Backend/src/routes/user.router.js:21-68` | Middleware de autenticación en todo lo que no sea público, y un interceptor HTTP en Angular que envíe `Authorization: Bearer` (hoy **no se envía nunca**) |
 | C3 | **Escalada de privilegios en el registro**: `POST /usuarios/crear` toma `rol` del cuerpo; el frontend lo fija a `cliente` solo en el navegador | `Backend/src/controllers/usuario.controller.js:11`, `register.component.ts:70-72` | El registro público crea siempre `cliente`. Alta de `tecnico`/`admin` solo por un admin autenticado, en otra ruta |
 | C4 | **Roles solo en el cliente**: el `AuthGuard` decodifica el JWT sin verificar la firma y el backend no mira `rol` | `ProyectoTW/src/app/guards/auth.guard.ts:26-31` | Middleware `requiereRol('admin', 'tecnico')` en el backend. El guard queda como comodidad visual |

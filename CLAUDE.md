@@ -16,8 +16,9 @@ antes de mirar [`docs/plan/01-estado.md`](docs/plan/01-estado.md), que tiene el 
 código, los endpoints y los fallos conocidos con su `archivo:línea`.
 
 **Estado (2026-10-23):** Fase 0 cerrada en código (credenciales fuera del repo,
-documentación). 🔴 **Pendiente del usuario**: revocar las dos contraseñas de aplicación
-de Gmail que siguen en el historial público y poner `EMAIL_USER`/`EMAIL_PASS` en Render
+documentación, historial de las ramas limpio). 🔴 **Pendiente del usuario**: revocar
+las dos contraseñas de aplicación de Gmail que estuvieron expuestas, poner
+`EMAIL_USER`/`EMAIL_PASS` en Render y pedir a GitHub que borre los PR #16–#20
 ([`fase-00`](docs/plan/fases/fase-00-credenciales-y-documentacion.md)). La siguiente es la
 **Fase 1 — cerrar el API** ([`04-hoja-de-ruta.md`](docs/plan/04-hoja-de-ruta.md)).
 
@@ -26,6 +27,9 @@ de Gmail que siguen en el historial público y poner `EMAIL_USER`/`EMAIL_PASS` e
 - **El repositorio es público** (`github.com/Dev-DsC/taller_mecanico`). Ningún secreto,
   correo personal, contraseña ni cadena de conexión se escribe en el código: todo va en
   `Backend/.env` (ignorado) y en las variables de Render. Plantilla: [`Backend/.env.example`](Backend/.env.example).
+- **El historial se reescribió el 2026-10-23** para quitar dos contraseñas. Nunca se hace
+  push desde un clon anterior a esa fecha, ni se restaura nada desde
+  `taller_mecanico-backups/`: devolvería las contraseñas a GitHub.
 - **El API no tiene autenticación real**: solo `/profileUser` pasa por `authMiddleware`, y
   el frontend nunca envía el token. Los roles solo se comprueban en el `AuthGuard` de
   Angular. Hasta que se cierre la Fase 1, **cualquier endpoint es público**. Ver

@@ -17,7 +17,7 @@ vayas a hacer, y nada más. Las reglas para mantener estos documentos están en
 | Tocar facturas, el IVA o el PDF | [`02-modelo-datos.md`](02-modelo-datos.md#facturación) + Fase 6 de [`04-hoja-de-ruta.md`](04-hoja-de-ruta.md#fase-6--facturación-con-validez-en-ecuador) | 🔴 IVA fijo al 12 % en tres sitios; Ecuador cobra 15 % desde 2024-04-01. No es un comprobante del SRI |
 | Escribir código en este repositorio | [`05-convenciones.md`](05-convenciones.md) | Forma de las respuestas `{ ok, data, msg }`, controlador → modelo, nombres en español |
 | Levantarlo en local, desplegar o tocar variables de entorno | [`06-operacion.md`](06-operacion.md) | `dotenv` se carga antes que la app. Las credenciales se rotan desde ahí |
-| Tocar el envío de correos o las credenciales | [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md) | 🔴 Hay dos contraseñas de aplicación de Gmail en el historial público: revocadas o no, nunca vuelven al código |
+| Tocar el envío de correos o las credenciales | [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md) | 🔴 Dos contraseñas de aplicación de Gmail estuvieron en el historial público (ya limpiado): revocadas o no, nunca vuelven al código. 🔴 Nadie hace push desde un clon anterior al 2026-10-23 |
 
 ## Archivos
 

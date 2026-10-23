@@ -26,9 +26,10 @@ vender un producto al que cualquiera le borra los datos.
 ## Fase 0 — Contención de credenciales ✅ código · 🔴 pendiente del usuario
 
 Ver [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md).
-Hecho: credenciales fuera del código, `.env.example`, `.gitignore`, esta documentación.
-Falta (solo puede hacerlo el usuario): revocar las dos contraseñas de aplicación, cargar
-las variables nuevas en Render y decidir si el repositorio pasa a privado.
+Hecho: credenciales fuera del código y del historial de las ramas, `.env.example`,
+`.gitignore`, esta documentación. Falta (solo puede hacerlo el usuario): revocar las dos
+contraseñas de aplicación, cargar las variables nuevas en Render, pedir a GitHub que
+borre los PR #16–#20 y decidir si el repositorio pasa a privado.
 
 ## Fase 1 — Cerrar el API
 

@@ -4,9 +4,10 @@ import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 
+// La cita es de una ficha de cliente: los clientes ya no tienen cuenta
 export interface Cita {
   cita_id: number;
-  usuario_id: number | null;
+  cliente_id: number | null;
   servicio_id: number;
   fecha: string;
   hora: string;

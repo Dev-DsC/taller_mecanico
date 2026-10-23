@@ -1,14 +1,18 @@
 const db = require('../config/db.js');
 
+// La cita es de una ficha de cliente (cliente_id). usuario_id es de cuando los clientes
+// tenían cuenta: ya no se escribe, y se retira cuando todas las citas tengan cliente_id
+// (Backend/db/migraciones/001-citas-por-cliente.sql)
+
 // Crear nueva cita
-const crear = async ({ usuario_id, servicio_id, fecha, hora, estado, observaciones }) => {
+const crear = async ({ cliente_id, servicio_id, fecha, hora, estado, observaciones }) => {
   const query = {
     text: `
-      INSERT INTO cita (usuario_id, servicio_id, fecha, hora, estado, observaciones)
+      INSERT INTO cita (cliente_id, servicio_id, fecha, hora, estado, observaciones)
       VALUES ($1, $2, $3, $4, $5, $6)
       RETURNING *;
     `,
-    values: [usuario_id, servicio_id, fecha, hora, estado, observaciones],
+    values: [cliente_id, servicio_id, fecha, hora, estado, observaciones],
   };
 
   const { rows } = await db.query(query);
@@ -24,16 +28,15 @@ const listar = async () => {
   return rows;
 };
 
-// Obtener cita por ID con JOIN a clientes y servicios
-// Obtener cita por ID con JOIN a clientes y servicios incluyendo IDs y nombres
-// Obtener cita por ID con JOIN a usuarios y servicios incluyendo IDs y nombres
+// Obtener cita por ID con el nombre del cliente y la descripción del servicio.
+// Una cita antigua sin cliente_id todavía muestra el nombre de la cuenta que la pidió.
 const obtenerPorId = async (cita_id) => {
   const query = {
     text: `
-      SELECT 
+      SELECT
         c.cita_id,
-        c.usuario_id,
-        u.nombre AS cliente_nombre,
+        c.cliente_id,
+        COALESCE(cl.nombre, u.nombre) AS cliente_nombre,
         c.servicio_id,
         s.descripcion AS servicio_descripcion,
         c.fecha,
@@ -41,6 +44,7 @@ const obtenerPorId = async (cita_id) => {
         c.estado,
         COALESCE(c.observaciones, 'Ninguna') AS observaciones
       FROM cita c
+      LEFT JOIN clientes cl ON c.cliente_id = cl.cliente_id
       LEFT JOIN usuarios u ON c.usuario_id = u.usuario_id
       LEFT JOIN servicios s ON c.servicio_id = s.servicio_id
       WHERE c.cita_id = $1;
@@ -54,15 +58,15 @@ const obtenerPorId = async (cita_id) => {
 
 
 // Actualizar cita
-const actualizar = async (cita_id, { usuario_id, servicio_id, fecha, hora, estado, observaciones }) => {
+const actualizar = async (cita_id, { cliente_id, servicio_id, fecha, hora, estado, observaciones }) => {
   const query = {
     text: `
-      UPDATE cita 
-      SET usuario_id = $1, servicio_id = $2, fecha = $3, hora = $4, estado = $5, observaciones = $6
+      UPDATE cita
+      SET cliente_id = $1, servicio_id = $2, fecha = $3, hora = $4, estado = $5, observaciones = $6
       WHERE cita_id = $7
       RETURNING *;
     `,
-    values: [usuario_id, servicio_id, fecha, hora, estado, observaciones, cita_id],
+    values: [cliente_id, servicio_id, fecha, hora, estado, observaciones, cita_id],
   };
   const { rows } = await db.query(query);
   return rows[0];

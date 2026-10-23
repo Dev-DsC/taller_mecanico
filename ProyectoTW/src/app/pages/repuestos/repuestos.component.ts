@@ -16,7 +16,7 @@ export class RepuestosComponent  implements OnInit{
   }
 
   obtenerInventarios(): void {
-    this.inventarioService.getInventarios().subscribe(
+    this.inventarioService.getCatalogo().subscribe(
       (data) => {
         this.inventarios = data; // data ya es un arreglo (response.data)
       },

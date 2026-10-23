@@ -26,6 +26,13 @@ export class InventarioService {
     );
   }
 
+  // Catálogo público de /repuestos: nombre, descripción, precio e imagen, sin stock
+  getCatalogo(): Observable<any[]> {
+    return this.http.get<any>(`${this.apiUrl}/catalogo/repuestos`).pipe(
+      map((response) => response.data),
+    );
+  }
+
   insertarRepuesto(repuesto: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/inventario`, repuesto);
   }

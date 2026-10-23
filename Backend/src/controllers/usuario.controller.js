@@ -1,14 +1,23 @@
-const UserModel = require('../models/user.model');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 const UsuarioModel = require('../models/usuario.model');
+const { ROLES_PERSONAL, LONGITUD_MINIMA_CONTRASENA } = require('../config/roles');
+
+// Todas estas rutas son solo del administrador: las cuentas son del personal y las crea él
+
+const contrasenaInvalida = (password) =>
+    typeof password !== 'string' || password.length < LONGITUD_MINIMA_CONTRASENA;
 
 // Crear nuevo usuario
-const { enviarCorreoVerificacion } = require('../services/email.service'); // asegúrate de importarlo
-
 const create = async (req, res) => {
     try {
-        const { nombre, email, password_hash, rol, telefono, direccion } = req.body;
+        const { nombre, email, password_hash, rol } = req.body;
+
+        if (!nombre || !email || !ROLES_PERSONAL.includes(rol)) {
+            return res.status(400).json({ ok: false, msg: 'Nombre, email y rol (admin o tecnico) son obligatorios' });
+        }
+        if (contrasenaInvalida(password_hash)) {
+            return res.status(400).json({ ok: false, msg: `La contraseña debe tener al menos ${LONGITUD_MINIMA_CONTRASENA} caracteres` });
+        }
 
         const emailExists = await UsuarioModel.findOneUserEmail(email);
         if (emailExists) {
@@ -23,26 +32,9 @@ const create = async (req, res) => {
             email,
             password_hash: hashedPassword,
             rol,
-            telefono,
-            direccion,
-            email_verificado: false, // Asegúrate que el modelo permita esto o lo ponga por defecto
         });
 
-        // Generar token de verificación
-        const token = jwt.sign(
-            { email },
-            process.env.JWT_SECRET,
-            { expiresIn: '1d' }
-        );
-
-        // Enviar correo de verificación
-        await enviarCorreoVerificacion(email, token);
-
-        res.status(201).json({ 
-            ok: true, 
-            usuario: newUser, 
-            msg: 'Usuario creado correctamente. Revisa tu correo para verificar tu cuenta.' 
-        });
+        res.status(201).json({ ok: true, usuario: newUser, msg: 'Usuario creado correctamente' });
     } catch (error) {
         console.error(error);
         res.status(500).json({ ok: false, msg: 'Error al crear usuario' });
@@ -74,11 +66,23 @@ const findById = async (req, res) => {
     }
 };
 
-// Actualizar usuario SIN modificar la contraseña
+// Actualizar usuario. Si llega una contraseña, el admin la está restableciendo: sin correo
+// no hay «olvidé mi contraseña», así que es la única forma de recuperar una cuenta.
 const update = async (req, res) => {
     try {
-        const id = req.params.id;
-        const { nombre, email, rol } = req.body;
+        const id = Number(req.params.id);
+        const { nombre, email, rol, password_hash } = req.body;
+
+        if (!ROLES_PERSONAL.includes(rol)) {
+            return res.status(400).json({ ok: false, msg: 'El rol debe ser admin o tecnico' });
+        }
+        // Así nunca se queda el taller sin administrador por un descuido
+        if (id === req.user.userId && rol !== req.user.rol) {
+            return res.status(400).json({ ok: false, msg: 'No puede cambiar su propio rol' });
+        }
+        if (password_hash && contrasenaInvalida(password_hash)) {
+            return res.status(400).json({ ok: false, msg: `La contraseña debe tener al menos ${LONGITUD_MINIMA_CONTRASENA} caracteres` });
+        }
 
         const usuario = await UsuarioModel.findUserById(id);
         if (!usuario) {
@@ -90,6 +94,11 @@ const update = async (req, res) => {
             email,
             rol,
         });
+
+        if (password_hash) {
+            const hashedPassword = await bcrypt.hash(password_hash, 10);
+            await UsuarioModel.updatePassword(id, hashedPassword);
+        }
 
         res.json({ ok: true, msg: 'Usuario actualizado', usuario: updatedUser });
     } catch (error) {
@@ -103,10 +112,15 @@ const update = async (req, res) => {
 // Eliminar usuario
 const remove = async (req, res) => {
     try {
-        const id = req.params.id;
+        const id = Number(req.params.id);
+        if (id === req.user.userId) {
+            return res.status(400).json({ ok: false, msg: 'No puede eliminar su propia cuenta' });
+        }
+
         await UsuarioModel.deleteUser(id);
         res.json({ ok: true, msg: 'Usuario eliminado' });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ ok: false, msg: 'Error al eliminar usuario' });
     }
 };

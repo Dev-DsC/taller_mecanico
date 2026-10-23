@@ -32,13 +32,21 @@
                     </div>
                   </div>
 
-                  <!-- Rol (ComboBox) -->
+                  <!-- Contraseña: obligatoria al crear; al editar, solo para restablecerla -->
+                  <div class="d-flex flex-row align-items-center mb-4">
+                    <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                    <div class="form-outline flex-fill mb-0">
+                      <input type="password" class="form-control" formControlName="password_hash" autocomplete="new-password" />
+                      <label class="form-label">{{ nameButtom === 'Nuevo' ? 'Contraseña (mínimo 8 caracteres)' : 'Nueva contraseña (vacía para no cambiarla)' }}</label>
+                    </div>
+                  </div>
+
+                  <!-- Rol (ComboBox). Solo personal: los clientes no tienen cuenta -->
                   <div class="d-flex flex-row align-items-center mb-4">
                     <i class="fas fa-user-tag fa-lg me-3 fa-fw"></i>
                     <div class="form-outline flex-fill mb-0">
                       <select class="form-select form-control" formControlName="rol">
                         <option value="" disabled selected>Selecciona un rol</option>
-                        <option value="cliente">Cliente</option>
                         <option value="tecnico">Tecnico</option>
                         <option value="admin">Administrador</option>
                       </select>

@@ -46,6 +46,17 @@ const listInventarios = async (req, res) => {
         return res.status(500).json({ ok: false, msg: "Error del servidor" });
     }
 };
+
+// Catálogo público de /repuestos: sin stock ni mínimos, que son del personal
+const listCatalogo = async (req, res) => {
+    try {
+        const repuestos = await InventarioModel.findCatalogo();
+        return res.status(200).json({ ok: true, data: repuestos });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ ok: false, msg: "Error del servidor" });
+    }
+};
 // Actualizar inventario
 const updateInventario = async (req, res) => {
     
@@ -105,7 +116,8 @@ const InventarioController = {
     updateInventario,
     deleteInventario,
     filterInventarios,
-    listInventariosId
+    listInventariosId,
+    listCatalogo
 };
 
 module.exports = InventarioController;

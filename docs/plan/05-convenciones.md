@@ -18,8 +18,8 @@ decida cambiarlo, y entonces se actualiza este archivo.
   interpolar valores. `RETURNING *` en inserciones y actualizaciones que devuelven la fila,
   salvo en `usuarios`, donde se listan columnas para no devolver `password_hash`.
 - **Transacciones**: `const client = await db.connect()` + `BEGIN` / `COMMIT` / `ROLLBACK`
-  y `client.release()` en `finally` (ver `usuario.model.js:5-57`). Toda escritura en más
-  de una tabla va así.
+  y `client.release()` en `finally` (ver `deleteUser` en `usuario.model.js`). Toda escritura
+  en más de una tabla va así.
 - **Respuestas**: `res.status(...).json({ ok: true, data })`, `{ ok: true, msg, data }` al
   crear/editar, `{ ok: false, msg }` en error. Mensajes al usuario en español.
 - **Errores**: `try/catch` en cada controlador, `console.error(error)` y 500 genérico. Un
@@ -33,6 +33,13 @@ decida cambiarlo, y entonces se actualiza este archivo.
   existente: `POST /<entidad>`, `GET /<entidad>s`, `GET /<entidad>/filtrar/:id`,
   `PUT /<entidad>/:id`, `DELETE /<entidad>/:id`. Ruta específica antes que la genérica
   (`/factura/filtrar/:id` antes de `/factura/:id`).
+- **Acceso**: toda ruta lleva `personal`, `soloAdmin` o `requiereAuth` como segundo
+  argumento. Quién es el usuario y qué rol tiene se lee de `req.user` (lo pone
+  `requiereAuth` desde la base). Los roles válidos están en `config/roles.js`.
+- **Pruebas**: en `Backend/test/*.test.js`, Jest + supertest contra `app`. La base se
+  sustituye con `jest.mock('../src/config/db', () => require('./db-falsa'))` y los modelos con
+  `jest.mock(...)`. Las cuentas de prueba y `tokenDe(usuario)` están en `test/ayudas.js`. Lo
+  que cambia el comportamiento de una ruta lleva su prueba en el mismo commit.
 
 ## Frontend (`ProyectoTW/src/app`)
 
@@ -43,6 +50,10 @@ decida cambiarlo, y entonces se actualiza este archivo.
   `private apiUrl = \`${environment.backendUrl}/api/users\`` y métodos que devuelven
   `Observable`. Si el backend envuelve en `{ ok, data }`, el servicio hace `map(r => r.data)`.
 - **Nunca** una URL del API escrita a mano en un componente: siempre `environment.backendUrl`.
+  Así el `AuthInterceptor` le pone el token: solo lo hace con las URLs que empiezan por ella.
+- **Sesión**: el token lo manda el interceptor; ningún servicio añade `Authorization` a mano
+  ni decodifica el JWT para sacar ids. El rol del JWT solo sirve para esconder pantallas
+  (`AuthGuard`, barra); quien decide es el API.
 - **Formularios**: reactivos (`FormBuilder` + `Validators`). Los nombres de los controles
   son los de las columnas (`password_hash` incluso para la contraseña en claro del login:
   el backend lo espera así).

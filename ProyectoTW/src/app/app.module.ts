@@ -5,16 +5,17 @@ import {
 } from '@angular/platform-browser';
 
 import {
+  HTTP_INTERCEPTORS,
   provideHttpClient,
   withFetch,
   withInterceptorsFromDi
 } from '@angular/common/http';
+import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { AuthComponent } from './auth/auth.component';
-import { RegisterComponent } from './auth/components/register.component';
 import { FacturaFormComponent } from './components/factura-form/factura-form.component';
 import { FacturaPdfComponent } from './components/factura-pdf/factura-pdf.component';
 import { HomeComponent } from './components/home/home.component';
@@ -44,7 +45,6 @@ import { CommonModule } from '@angular/common';
 
 import { MatSelectModule } from '@angular/material/select';
 import { MatDividerModule } from '@angular/material/divider';
-import { AgendarCitaClienteComponent } from './pages/cita/agendar-cita-cliente/agendar-cita-cliente.component';
 
 
 import { FullCalendarModule } from '@fullcalendar/angular';
@@ -52,9 +52,6 @@ import { DetalleCitaDialogComponent } from './pages/cita/citas-calendario/detall
 import { MatDialogModule } from '@angular/material/dialog';
 
 import { CitasCalendarioComponent } from './pages/cita/citas-calendario/citas-calendario.component';
-import { CitasCalendarioClienteComponent } from './pages/cita/citas-calendario-cliente/citas-calendario-cliente.component';
-import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
-import { DetalleCitaDialogClienteComponent } from './pages/cita/citas-calendario-cliente/detalle-cita-dialog-cliente/detalle-cita-dialog-cliente.component';
 import { ToastrModule } from 'ngx-toastr';
 
 
@@ -70,7 +67,6 @@ import { ToastrModule } from 'ngx-toastr';
     AcercaDeComponent,
     ContactanosComponent,
     AuthComponent,
-    RegisterComponent,
     AddRespuestoComponent,
     InventarioComponent,
     ClienteComponent,
@@ -83,14 +79,8 @@ import { ToastrModule } from 'ngx-toastr';
     FacturaFormComponent,
     CitaComponent,
     AgendarCitaComponent,
-    AgendarCitaClienteComponent,
     CitasCalendarioComponent,
-    DetalleCitaDialogComponent,
-    CitasCalendarioComponent,
-    CitasCalendarioClienteComponent,
-    VerificacionExitosaComponent,
-    DetalleCitaDialogClienteComponent
-    
+    DetalleCitaDialogComponent
   ],
 imports: [
   BrowserModule,
@@ -124,6 +114,7 @@ imports: [
     withFetch(),
     withInterceptorsFromDi()
   ),
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 ],
   bootstrap: [AppComponent],
 })

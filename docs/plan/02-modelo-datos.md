@@ -4,10 +4,19 @@
 
 ## 🔴 El esquema no está en el repositorio
 
-No hay migraciones, ni `schema.sql`, ni seeds. Las tablas, la vista, los procedimientos
-almacenados y los triggers **existen solo en la base de producción** (la que apunta
-`DATABASE_URL` en Render). Todo lo de abajo está **inferido de las consultas del código**:
-las columnas listadas son las que el código lee o escribe, no necesariamente todas.
+No hay `schema.sql` ni seeds. Las tablas, la vista, los procedimientos almacenados y los
+triggers **existen solo en la base de producción** (la que apunta `DATABASE_URL` en Render).
+Todo lo de abajo está **inferido de las consultas del código**: las columnas listadas son
+las que el código lee o escribe, no necesariamente todas.
+
+Lo único versionado son los **cambios** desde la Fase 1, en `Backend/db/migraciones/`:
+
+| Migración | Qué hace | Estado |
+|---|---|---|
+| `001-citas-por-cliente.sql` | Añade `cita.cliente_id` (FK a `clientes`), la rellena desde `clientes.usuario_id`, índice, y `cita.usuario_id` admite nulos. Aditiva e idempotente | 🔴 **Pendiente de ejecutar** en producción ([Fase 1](fases/fase-01-sistema-interno.md#despliegue---en-este-orden-y-la-base-solo-con-permiso-del-usuario)) |
+
+Cada migración lleva al lado un `.revisar.sql` de solo lectura que se ejecuta antes. Se
+ejecutan a mano y **solo con permiso del usuario**: no hay base de desarrollo.
 
 Consecuencias mientras no se cierre la [Fase 3](04-hoja-de-ruta.md#fase-3--base-de-datos-versionada):
 
@@ -21,14 +30,20 @@ Consecuencias mientras no se cierre la [Fase 3](04-hoja-de-ruta.md#fase-3--base-
 
 | Tabla | Clave | Columnas que usa el código | Modelo |
 |---|---|---|---|
-| `usuarios` | `usuario_id` | `nombre`, `email`, `password_hash` (bcrypt, 10 rondas), `rol` (`admin` · `tecnico` · `cliente`), `email_verificado` | `user.model.js`, `usuario.model.js` |
-| `clientes` | `cliente_id` | `nombre`, `telefono`, `email`, `direccion`, `usuario_id` (nulo si lo dio de alta el personal) | `cliente.model.js` |
+| `usuarios` | `usuario_id` | `nombre`, `email`, `password_hash` (bcrypt, 10 rondas), `rol`, `email_verificado` | `user.model.js`, `usuario.model.js` |
+| `clientes` | `cliente_id` | `nombre`, `telefono`, `email`, `direccion`, `usuario_id` (solo en fichas de cuando los clientes tenían cuenta) | `cliente.model.js` |
 | `inventarios` | `repuesto_id` | `nombre`, `cantidad_disponible`, `cantidad_minima`, `costo_unitario`, `imagen` (data-URL base64), `descripcion`, `fecha_ingreso`(?) | `inventario.model.js` |
 | `servicios` | `servicio_id` | `descripcion`, `costo_servicio` | `servicio-detalle.js` |
 | `servicio_detalle` | `detalle_id` | `servicio_id`, `cliente_id`, `repuesto_id`, `cantidad`, `factura_id` (nulo hasta facturar) | `servicio-detalle.js` |
 | `factura` | `factura_id` | `numero_factura` (`FA-00001`), `cliente_id`, `fecha_emision`, `subtotal`, `iva`, `total`, `estado` | `factura.model.js` |
 | `factura_detalle` | `factura_detalle_id` | `factura_id`, `servicio_id` **o** `repuesto_id`, `cantidad`, `precio_unitario`, `subtotal` | `factura_detalle.model.js` |
-| `cita` | `cita_id` | `usuario_id` (el usuario, no el cliente), `servicio_id`, `fecha`, `hora`, `estado` (`PENDIENTE`…), `observaciones`, `creado_en` | `cita.model.js` |
+| `cita` | `cita_id` | `cliente_id` (la ficha; desde la migración 001), `servicio_id`, `fecha`, `hora`, `estado` (`PENDIENTE`…), `observaciones`, `creado_en`, y `usuario_id` (solo en citas antiguas; ya no se escribe) | `cita.model.js` |
+
+**`usuarios` es solo del personal** desde la Fase 1: el código crea únicamente `admin` y
+`tecnico`, y nacen con `email_verificado = TRUE`. Las filas con `rol = 'cliente'` son de
+cuando había registro público: no pueden iniciar sesión y se conservan porque fichas y citas
+antiguas apuntan a ellas. `email_verificado = FALSE` en una cuenta de personal significa
+«sin activar»: ya no hay correo que la active, lo hace el admin con SQL.
 
 `fecha_ingreso` aparece en el formulario de repuestos pero ningún modelo la escribe: el
 procedimiento `insertar_inventario` recibe 6 argumentos sin ella.
@@ -76,8 +91,10 @@ Los mensajes `P0001` se traducen a 400 en `service_detalle.controller.js:26-32` 
 
 ## Borrados
 
-- `DELETE /usuarios/eliminar/:id` borra en transacción las filas de `clientes` de ese usuario
-  y luego el usuario (`usuario.model.js:104-119`). Si `factura` referencia al cliente, o
-  falla por clave foránea o arrastra facturas — depende de una restricción que no vemos.
-  🔒 Una factura emitida **no debería poder borrarse nunca**; a partir de la Fase 2 se
-  desactiva al cliente en vez de borrarlo.
+- 🔒 `DELETE /usuarios/eliminar/:id` **nunca borra datos del taller**: en una transacción pone
+  a `NULL` el `usuario_id` de sus fichas de `clientes` y de sus citas, y luego borra la
+  cuenta (`usuario.model.js`, `deleteUser`). Antes de la Fase 1 borraba las fichas del cliente.
+  Necesita la migración 001 (`cita.usuario_id` admite nulos).
+- `DELETE /cliente/:id` llama a `CALL eliminar_cliente`: qué hace con sus facturas y citas
+  depende de restricciones que no vemos. 🔒 Una factura emitida **no debería poder borrarse
+  nunca**; en la Fase 2 se desactiva al cliente en vez de borrarlo.

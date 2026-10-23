@@ -12,12 +12,10 @@ import { InventarioComponent } from './pages/inventario/inventario.component';
 import { ClienteComponent } from './pages/cliente/cliente.component';
 import { ServicioContratadoComponent } from './pages/servicio-contratado/servicio-contratado.component';
 import { UsuarioComponent } from './pages/usuario/usuario.component';
-import { AgendarCitaClienteComponent } from './pages/cita/agendar-cita-cliente/agendar-cita-cliente.component';
 import { AgendarCitaComponent } from './pages/cita/agendar-cita/agendar-cita.component';
 import { AuthGuard } from './guards/auth.guard';
 import { AddClienteComponent } from './pages/cliente/add-cliente/add-cliente.component';
 import { AddUsuarioComponent } from './pages/usuario/add-usuario/add-usuario.component';
-import { VerificacionExitosaComponent } from './pages/verificacion-exitosa/verificacion-exitosa.component';
 import { AddRespuestoComponent } from './pages/inventario/add-respuestos/add-respuesto.component';
 
 const routes: Routes = [
@@ -26,9 +24,12 @@ const routes: Routes = [
   { path: 'ubicacion', component: UbicacionComponent, data: { animation: 'UbicacionPage', index: 3 } },
   { path: 'acerca-de', component: AcercaDeComponent, data: { animation: 'AcercaDePage', index: 4 } },
   { path: 'contactanos', component: ContactanosComponent, data: { animation: 'ContactanosPage', index: 5 } },
+  // Pese al nombre, es el login: solo el personal tiene cuenta
   { path: 'register', component: AuthComponent, data: { animation: 'RegisterPage', index: 6 } },
-  { path: 'agendar-cita-cliente', component: AgendarCitaClienteComponent, data: { animation: 'AgendarCitaClientePage', index: 6 } },
-  { path: 'verificado', component: VerificacionExitosaComponent },
+  // Los clientes ya no tienen cuenta: las URLs que pudieran tener guardadas van a donde
+  // está el WhatsApp del taller, o a la portada
+  { path: 'agendar-cita-cliente', redirectTo: '/contactanos', pathMatch: 'full' },
+  { path: 'verificado', redirectTo: '/servicios', pathMatch: 'full' },
   // Aquí proteges rutas que requieran autenticación y roles específicos
   { 
     path: 'inventario', 

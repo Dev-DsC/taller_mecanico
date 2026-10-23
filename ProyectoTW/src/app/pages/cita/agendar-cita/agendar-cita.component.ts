@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ServicioDetalleService } from '../../../services/servicio-detalle.service';
 import { servicios } from '../../../models/servicio.model';
 import { CitaService, CitaResponse } from '../../../services/cita.service';
-import { UsuarioService } from '../../../services/usuario.service';
+import { ClienteService } from '../../../services/cliente.service';
 import { ToastrService } from 'ngx-toastr';
 
 @Component({
@@ -21,7 +21,7 @@ export class AgendarCitaComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private usuarioService: UsuarioService,
+    private clienteService: ClienteService,
     private servicioDetalleService: ServicioDetalleService,
     private citaService: CitaService,
     private toastr: ToastrService
@@ -36,7 +36,7 @@ export class AgendarCitaComponent implements OnInit {
 
   initForm() {
     this.citaForm = this.fb.group({
-      usuario_id: ['', Validators.required],
+      cliente_id: ['', Validators.required],
       servicio_id: ['', Validators.required],
       fecha: ['', Validators.required],
       hora: ['', Validators.required],
@@ -45,13 +45,14 @@ export class AgendarCitaComponent implements OnInit {
     });
   }
 
+  // Todas las fichas de clientes, también las de quien llega al mostrador sin cuenta
   cargarClientes() {
-    this.usuarioService.getUsuarios().subscribe({
+    this.clienteService.getCliente().subscribe({
       next: data => {
-        this.clientes = data.filter(u => u.rol === 'cliente');
+        this.clientes = data;
       },
       error: err => {
-        console.error('Error cargando usuarios:', err);
+        console.error('Error cargando clientes:', err);
         this.toastr.error('No se pudieron cargar los clientes.', 'Error');
       }
     });

@@ -3,13 +3,17 @@ const CitaModel = require('./../models/cita.model.js');
 // Crear nueva cita
 async function crearCita(req, res) {
   try {
-    const { usuario_id, servicio_id, fecha, hora, estado, observaciones } = req.body;
+    const { cliente_id, servicio_id, fecha, hora, estado, observaciones } = req.body;
+
+    if (!cliente_id || !servicio_id || !fecha || !hora) {
+      return res.status(400).json({ ok: false, msg: 'Cliente, servicio, fecha y hora son obligatorios' });
+    }
 
     const estadoCita = estado || 'PENDIENTE';
 
     // Usar estadoCita al insertar en DB
     const nuevaCita = await CitaModel.crear({
-      usuario_id,
+      cliente_id,
       servicio_id,
       fecha,
       hora,
@@ -57,10 +61,10 @@ const obtenerCitaPorId = async (req, res) => {
 const actualizarCita = async (req, res) => {
   try {
     const { id } = req.params;
-    const { usuario_id, servicio_id, fecha, hora, estado, observaciones } = req.body;
+    const { cliente_id, servicio_id, fecha, hora, estado, observaciones } = req.body;
 
     const citaActualizada = await CitaModel.actualizar(id, {
-      usuario_id,
+      cliente_id,
       servicio_id,
       fecha,
       hora,

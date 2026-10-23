@@ -58,15 +58,6 @@
             >Contáctanos</a
           >
         </li>
-         <li class="nav-item" *ngIf="userRole === 'cliente' ">
-          <a
-            class="nav-link nav-box"
-            aria-current="page"
-            routerLink="/agendar-cita-cliente"
-            >Agenda tu cita</a
-          >
-          >
-        </li>
         <li
           class="nav-item"
           *ngIf="userRole === 'admin' || userRole === 'tecnico'"
@@ -142,26 +133,7 @@
             </div>
           </div>
         </div>
-        <li
-          class="nav-item"
-          *ngIf="!token || userRole == 'tecnico' || userRole !== 'cliente'"
-        >
-          <a
-            class="btn btn-outline-dark"
-            data-bs-toggle="modal"
-            data-bs-target="#register"
-          >
-            Crear nueva cuenta
-          </a>
-        </li>
-
-        <div class="modal" id="register">
-          <div class="modal-dialog modal-lg">
-            <div class="modal-content container-fluid modalClose">
-              <app-register></app-register>
-            </div>
-          </div>
-        </div>
+        <!-- No hay «Crear nueva cuenta»: las cuentas son del personal y las crea el admin en /usuario/add -->
       </ul>
     </div>
   </div>

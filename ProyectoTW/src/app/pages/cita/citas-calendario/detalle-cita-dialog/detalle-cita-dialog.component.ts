@@ -22,7 +22,8 @@ export class DetalleCitaDialogComponent implements OnInit {
     const fechaFormateada = this.data.fecha?.split('T')[0]; // '2025-07-10'
 
    this.citaForm = this.fb.group({
-  usuario_id: [this.data.usuario_id || '', Validators.required], // cambia cliente_id por usuario_id
+  // Sin required: una cita antigua sin ficha de cliente también tiene que poder editarse
+  cliente_id: [this.data.cliente_id ?? null],
   servicio_id: [this.data.servicio_id || '', Validators.required],
   fecha: [fechaFormateada || '', Validators.required],
   hora: [this.data.hora || '', Validators.required],

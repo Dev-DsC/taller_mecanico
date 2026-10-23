@@ -13,13 +13,13 @@ Las fases que dependen de una decisión abierta no empiezan sin esa respuesta.
 
 ```
 F0 ──► F1 ──► F2 ──► F3 ──► F4 ──┬──► F6 (fiscal) ──┐
-contención  API    lo roto  esquema  marca     │                    ├──► F5 (multi-taller) ──► F9 (lanzamiento)
-            cerrado         versionado blanca  └──► F7 (producto) ──┘
+contención  sistema lo roto esquema  marca     │                    ├──► F5 (multi-taller) ──► F9 (lanzamiento)
+            interno         versionado blanca  └──► F7 (producto) ──┘
 F8 (calidad y operación) avanza en paralelo desde F1: cada fase deja sus pruebas.
 ```
 
-F1 va primero porque **ninguna otra mejora tiene sentido con el API abierto**: se podría
-vender un producto al que cualquiera le borra los datos.
+F1 fue primero porque **ninguna otra mejora tenía sentido con el API abierto**: se habría
+vendido un producto al que cualquiera le borra los datos.
 
 ---
 
@@ -28,45 +28,34 @@ vender un producto al que cualquiera le borra los datos.
 Ver [`fases/fase-00-credenciales-y-documentacion.md`](fases/fase-00-credenciales-y-documentacion.md).
 Hecho: credenciales fuera del código y del historial de las ramas, `.env.example`,
 `.gitignore`, esta documentación. Falta (solo puede hacerlo el usuario): revocar las dos
-contraseñas de aplicación, cargar las variables nuevas en Render, pedir a GitHub que
-borre los PR #16–#20 y decidir si el repositorio pasa a privado.
+contraseñas de aplicación, pedir a GitHub que borre los PR #16–#20 y decidir si el
+repositorio pasa a privado. (Desde la Fase 1 ya no hace falta una contraseña nueva de Gmail.)
 
-## Fase 1 — Cerrar el API
+## Fase 1 — Sistema interno con accesos cerrados ✅ código · 🔴 pendiente de desplegar
 
-**Objetivo**: que el backend, y no el navegador, decida quién puede hacer qué.
-
-- `authMiddleware` en todas las rutas salvo las públicas declaradas: `login`, registro,
-  `verificar-email`, `enviar-verificacion`, `GET /servicios`.
-- Middleware de rol (`requiereRol`) con la misma matriz que `app-routing.module.ts`.
-- El registro público crea siempre `cliente`; alta de personal en una ruta solo para admin.
-- `PUT /usuarios/editar/:id`: solo admin, o el propio usuario sin tocar `rol`.
-- Citas: el cliente lee y crea solo las suyas (`usuario_id` del token, no del cuerpo).
-- `/profileUser` desde `req.user`, sin `password_hash`.
-- Interceptor HTTP en Angular que envíe `Authorization: Bearer`, y que ante un 401 limpie la
-  sesión y lleve al login.
-- Tokens de verificación con secreto o `audience` propio; mensaje de login único;
-  `express-rate-limit` en login, registro y reenvío; `helmet`; límite de cuerpo razonable.
-
-**Hecho cuando**: con `curl` y sin token, cada ruta privada responde 401; con token de
-`cliente`, las del personal responden 403; registrarse con `"rol":"admin"` crea un
-`cliente`. Pruebas automáticas (supertest) que lo comprueban, en verde.
-
-⚠️ Romperá el frontend en producción si se despliega el backend sin el interceptor: van
-**en el mismo despliegue**.
+Ver [`fases/fase-01-sistema-interno.md`](fases/fase-01-sistema-interno.md). Solo el personal
+tiene cuenta y el admin las crea. El backend exige sesión y rol en cada ruta, comprobado
+por una prueba que recorre el router. La agenda pasa a las fichas de clientes. Se retiraron
+el registro público, el rol `cliente` y el correo. Está en el PR #22. 🔴 Antes de fusionar:
+que Vercel vuelva a desplegar (la web está congelada desde 2025-07-22, ver
+[`06-operacion.md`](06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)),
+auditar las cuentas y ejecutar la migración 001, con permiso del usuario.
 
 ## Fase 2 — Corregir lo roto
 
 **Objetivo**: que lo que existe funcione siempre, antes de añadir nada.
 
 - Todos los fallos de backend y frontend de [`01-estado.md`](01-estado.md#fallos-conocidos-no-arreglados),
-  empezando por los que afectan al uso diario: alta de usuarios desde el panel, filtro de
-  clientes, `createInventario` sin `await`, `updateFacturaId`, manejador de errores.
-- Registro que no deja usuarios huérfanos si falla el correo, y pantalla para pedir otro.
+  empezando por los que afectan al uso diario: filtro de clientes, `createInventario` sin
+  `await`, `updateFacturaId`, manejador de errores.
+- Cambiar la contraseña propia desde el panel. Separar en `/usuario` las cuentas `cliente`
+  antiguas (o borrarlas, si el usuario lo decide).
 - Factura en **una transacción** y número de factura con **secuencia** de PostgreSQL.
 - Validación de entrada en el servidor (un esquema por ruta).
 - Respuestas uniformes `{ ok, data | msg }` en todas las rutas.
-- Dependencias de Angular alineadas (Material/CDK 18), fuera `nodemailer` del frontend y
-  `bcryptjs` del backend; `dist/` fuera de git.
+- Dependencias de Angular alineadas (Material/CDK 18) y, con eso, fuera `ProyectoTW/.npmrc`
+  (`legacy-peer-deps`, puesto en el PR #22 para que Vercel pudiera instalar). Fuera
+  `nodemailer` del frontend y `bcryptjs` del backend; `dist/` fuera de git.
 
 **Hecho cuando**: la lista de fallos de `01-estado.md` está vacía o cada uno remanente
 tiene su motivo escrito.
@@ -75,7 +64,8 @@ tiene su motivo escrito.
 
 **Objetivo**: poder crear una base nueva desde el repositorio, sin copiar la de producción.
 
-- `pg_dump --schema-only` de producción → primera migración (`Backend/db/migrations/`).
+- `pg_dump --schema-only` de producción → migración base en `Backend/db/migraciones/`, que
+  ya existe con la 001 de la Fase 1 (la herramienta tiene que darla por aplicada).
 - Herramienta de migraciones (p. ej. `node-pg-migrate`) y `npm run db:migrate`.
 - Seeds mínimos: servicios de ejemplo y un admin inicial creado por script, nunca con
   contraseña fija.
@@ -117,22 +107,27 @@ tiene su motivo escrito.
 
 ## Fase 7 — Funciones que un taller paga
 
-Por orden de valor estimado; se confirma con el usuario antes de cada una:
+Por orden de valor estimado; se confirma con el usuario antes de cada una. 🔒 El cliente
+**no tiene cuenta** ([decisión](00-contexto.md#decisiones-tomadas)): todo lo que le llega va
+sin contraseña, con enlaces únicos que caducan y límite de abusos.
 
 1. **Vehículos** (placa, marca, modelo, año, km) e historial por vehículo.
 2. **Orden de trabajo** con varias líneas de servicio y repuesto, técnico asignado y
    estados (recibido → diagnóstico → presupuestado → aprobado → en reparación → listo → entregado).
-3. **Presupuesto** que el cliente aprueba desde un enlace.
-4. **Recordatorios** de cita y de mantenimiento (correo/WhatsApp).
-5. **Alertas de stock mínimo** (`cantidad_minima` ya existe) y movimientos de inventario.
-6. **Pagos y abonos** por orden; cuentas por cobrar.
-7. **Reportes**: ingresos por periodo, servicios más vendidos, productividad por técnico.
-8. Fotos de recepción del vehículo.
+3. **Solicitud de cita desde la web**, sin cuenta: nombre, teléfono, placa, servicio y hueco
+   preferido. El personal la confirma, y se convierte en cita de una ficha (nueva o existente).
+4. **Enlace único por orden**: el cliente ve el presupuesto y lo aprueba, y sigue el estado de su carro.
+5. **Avisos y recordatorios** de cita, de carro listo y de mantenimiento (WhatsApp/correo).
+6. **Alertas de stock mínimo** (`cantidad_minima` ya existe) y movimientos de inventario.
+7. **Pagos y abonos** por orden; cuentas por cobrar.
+8. **Reportes**: ingresos por periodo, servicios más vendidos, productividad por técnico.
+9. Fotos de recepción del vehículo.
 
 ## Fase 8 — Calidad y operación (continua)
 
-- Pruebas: supertest para auth/roles y facturación en el backend; e2e de los flujos de
-  registro, cita y factura. Fuera las 27 «should create» vacías.
+- Pruebas: el backend ya tiene Jest + supertest (Fase 1: accesos, login, cuentas, citas).
+  Faltan facturación y e2e de los flujos de cita y factura. Fuera las 26 «should create»
+  vacías del frontend (hoy `npm test` ni compila).
 - CI en GitHub Actions: build del frontend, pruebas del backend, búsqueda de secretos (gitleaks).
 - Entorno de staging con su propia base.
 - Registro de errores (Sentry o similar) y salud del API (`GET /health`).
@@ -140,7 +135,7 @@ Por orden de valor estimado; se confirma con el usuario antes de cada una:
 
 ## Fase 9 — Lanzamiento comercial
 
-- Términos de uso y política de privacidad (LOPDP): consentimiento en el registro,
-  derecho de acceso y eliminación de datos.
-- Manual por rol (cliente, técnico, admin) y guía de alta de un taller.
+- Términos de uso y política de privacidad (LOPDP): el taller es el responsable de los datos
+  de sus clientes; consentimiento en la solicitud de cita, derecho de acceso y eliminación.
+- Manual por rol (técnico, admin) y guía de alta de un taller.
 - Landing de venta, precios, demo con datos ficticios, canal de soporte.

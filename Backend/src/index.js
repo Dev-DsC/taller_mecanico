@@ -1,6 +1,6 @@
 const dotenv = require('dotenv');
 
-// Antes de cargar la app: db.js y email.service.js leen process.env al importarse
+// Antes de cargar la app: db.js lee process.env al importarse
 dotenv.config();
 
 const app = require('./app');

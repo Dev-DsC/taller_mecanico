@@ -9,6 +9,15 @@ const findAllInventario = async () => {
     return rows; // Retornar los resultados
 };
 
+// Catálogo público: solo lo que enseña /repuestos. costo_unitario es hoy el precio de venta.
+const findCatalogo = async () => {
+    const query = {
+        text: 'SELECT repuesto_id, nombre, descripcion, costo_unitario, imagen FROM public.inventarios ORDER BY nombre;',
+    };
+    const { rows } = await db.query(query);
+    return rows;
+};
+
 
 // Filtrar inventarios por ID
 const filterInventarioId = async (id) => {
@@ -69,6 +78,7 @@ const deleteInventario = async (id) => {
 const InventarioModel = {
     create,
     findAllInventario,
+    findCatalogo,
     updateInventarios,
     deleteInventario,
     filterInventarioId,

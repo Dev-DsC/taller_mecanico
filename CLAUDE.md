@@ -18,9 +18,9 @@ código, los endpoints y los fallos conocidos con su `archivo:línea`.
 
 **Estado (2026-10-23):**
 - **Fase 0** cerrada: credenciales fuera del repositorio e historial limpio.
-- **Fase 1** (sistema interno, accesos cerrados) escrita y probada en
-  `fase-01-sistema-interno`, **sin desplegar**. Antes de fusionarla hay que auditar las
-  cuentas y ejecutar la migración 001, solo con permiso del usuario
+- **Fase 1** (sistema interno, accesos cerrados) escrita y probada, en el PR #22, **sin
+  fusionar**. Antes hay que conseguir que Vercel despliegue, auditar las cuentas y ejecutar
+  la migración 001, esto último solo con permiso del usuario
   ([`fase-01`](docs/plan/fases/fase-01-sistema-interno.md#despliegue---en-este-orden-y-la-base-solo-con-permiso-del-usuario)).
 - 🔴 **Pendiente del usuario**: revocar las dos contraseñas de aplicación de Gmail que
   estuvieron expuestas y pedir a GitHub que borre los PR #16–#20
@@ -35,6 +35,10 @@ código, los endpoints y los fallos conocidos con su `archivo:línea`.
 - **El historial se reescribió el 2026-10-23** para quitar dos contraseñas. Nunca se hace
   push desde un clon anterior a esa fecha, ni se restaura nada desde
   `taller_mecanico-backups/`: devolvería las contraseñas a GitHub.
+- **La web de producción está congelada desde 2025-07-22** (`b190268`): en Vercel la
+  instalación falla con `ERESOLVE` y además los despliegues salen bloqueados. Un PR en verde
+  no significa que se haya publicado: hay que mirar que el despliegue quede `READY` en Vercel
+  ([`06-operacion.md`](docs/plan/06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)).
 - **Toda ruta del API declara su acceso** en `Backend/src/routes/user.router.js`
   (`personal`, `soloAdmin` o `requiereAuth`); el rol se lee de `req.user`, que viene de la
   base, nunca del cuerpo. Las únicas públicas son el login y el catálogo de repuestos.

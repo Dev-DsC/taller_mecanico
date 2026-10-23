@@ -86,14 +86,32 @@ que se ejecuta antes y cuyo resultado se revisa con el usuario. Estado de cada u
 
 - **API**: Render despliega `Backend/` con `npm start`. Una variable nueva se añade en
   Render **antes** de desplegar el código que la usa.
-- **Web**: `npm run build` usa `environment.prod.ts`. Vercel sirve `dist/spa/browser` con
-  `vercel.json` reescribiendo todo a `index.html`. (La configuración exacta del proyecto
-  en Vercel —directorio raíz, comando de instalación— está **por confirmar**.)
+- **Web**: Vercel, equipo `daltinhos-projects`, proyecto `taller-mecanico-52bo`
+  (`prj_FvUxlSSV6SWJbWsVAI33RFa5nYRt`, framework Angular). Ejecuta `npm install` y
+  `npm run build` con `environment.prod.ts`, y sirve el build con `vercel.json`, que
+  reescribe todo a `index.html`.
 - Backend y frontend se despliegan juntos cuando cambia un contrato (rutas, forma de la
   respuesta, cabeceras). La Fase 1 es uno: su orden está en
   [`fase-01`](fases/fase-01-sistema-interno.md#despliegue---en-este-orden-y-la-base-solo-con-permiso-del-usuario).
-- 🔴 Vercel ha bloqueado previews con *«Deployment was blocked»* en commits con coautor ajeno
-  al equipo (PR #21). Comprobar siempre que el despliegue de producción salió.
+
+### 🔴 La web de producción está congelada desde 2025-07-22
+
+Medido con el API de Vercel el 2026-10-23. Producción sirve el **último despliegue que
+salió, `b190268`** («arreglar behavior en citas calendario», 2025-07-22). Nada posterior se
+ha publicado, por dos motivos que se suman:
+
+1. **La instalación falla desde 2025-07-23** (`c60d5d8`, `BUILD_UTILS_SPAWN_1`): `npm install`
+   da `ERESOLVE` por `@angular/material@17` con `@angular/core@18`. En local se instala con
+   `--legacy-peer-deps`; Vercel no lo usa.
+2. **Desde 2026-10 Vercel bloquea todos los despliegues** con «Deployment was blocked»
+   (`readyState: BLOCKED`, sin motivo en el API), incluidos commits sin coautor como `a65d99c`.
+   Coincide con el cambio de nombre de la cuenta de GitHub: los despliegues de 2025 dicen
+   `githubOrg: Developer-DsC` y los de ahora `Dev-DsC`. El motivo exacto se ve en el panel
+   de Vercel, en el despliegue bloqueado.
+
+Hasta que los dos estén resueltos, **ningún cambio del frontend llega a producción**, y uno
+del backend que cambie el contrato deja la web vieja sin funcionar. Comprobar siempre en
+Vercel que el despliegue de producción quedó `READY`, no basta con que el PR esté verde.
 
 ## Rotar una credencial
 

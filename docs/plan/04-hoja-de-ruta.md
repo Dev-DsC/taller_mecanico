@@ -36,8 +36,10 @@ repositorio pasa a privado. (Desde la Fase 1 ya no hace falta una contraseña nu
 Ver [`fases/fase-01-sistema-interno.md`](fases/fase-01-sistema-interno.md). Solo el personal
 tiene cuenta y el admin las crea. El backend exige sesión y rol en cada ruta, comprobado
 por una prueba que recorre el router. La agenda pasa a las fichas de clientes. Se retiraron
-el registro público, el rol `cliente` y el correo. 🔴 Antes de fusionar: auditar las cuentas
-y ejecutar la migración 001, con permiso del usuario.
+el registro público, el rol `cliente` y el correo. Está en el PR #22. 🔴 Antes de fusionar:
+que Vercel vuelva a desplegar (la web está congelada desde 2025-07-22, ver
+[`06-operacion.md`](06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)),
+auditar las cuentas y ejecutar la migración 001, con permiso del usuario.
 
 ## Fase 2 — Corregir lo roto
 

@@ -77,6 +77,12 @@ previa `.revisar.sql`.
 
 ## Despliegue — 🔴 en este orden, y la base solo con permiso del usuario
 
+0. **Que Vercel pueda desplegar.** Hoy no puede: la web de producción está congelada en
+   `b190268` (2025-07-22) porque la instalación falla con `ERESOLVE` y además Vercel bloquea
+   todos los despliegues ([`06-operacion.md`](../06-operacion.md#-la-web-de-producción-está-congelada-desde-2025-07-22)).
+   Si se fusiona antes, Render despliega el API nuevo y la web vieja, que no manda token,
+   recibe 401 en todo: **el panel deja de funcionar**. El PR #22 no se fusiona hasta que un
+   despliegue de Vercel quede `READY`.
 1. Ejecutar `001-citas-por-cliente.revisar.sql` (solo lectura) y revisar:
    - **las cuentas de personal**: el API estuvo abierto y pudo haber admins creados por
      terceros. Se borran o se les cambia la contraseña desde `/usuario` una vez desplegado;
@@ -85,8 +91,8 @@ previa `.revisar.sql`.
 2. Ejecutar `001-citas-por-cliente.sql` (aditiva; el código viejo la ignora).
 3. Fusionar el PR a una hora sin uso. Web y API nuevas dependen una de otra: durante los
    minutos que tardan en desplegarse las dos, el panel no funciona.
-4. Comprobar que **Vercel no bloquea** el despliegue de producción («Deployment was
-   blocked», como en el preview del PR #21). Si lo bloquea, revertir Render hasta resolverlo.
+4. Comprobar en Vercel que el despliegue de producción de la fusión quedó `READY`. Si no,
+   revertir Render al despliegue anterior hasta resolverlo.
 5. Volver a ejecutar `001-citas-por-cliente.sql` para enlazar las citas creadas entretanto.
 6. Quitar `EMAIL_USER`, `EMAIL_PASS` y `EMAIL_FROM` de Render, si llegaron a ponerse.
 
